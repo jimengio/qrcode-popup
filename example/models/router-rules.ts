@@ -1,3 +1,3 @@
 import { IRouteRule } from "@jimengio/ruled-router";
 
-export const routerRules: IRouteRule[] = [{ path: "home" }, { path: "content" }, { path: "else" }, { path: "", name: "home" }];
+export const routerRules: IRouteRule[] = [{ path: "qr-code" }, { path: "barcode" }, { path: "", name: "home" }];

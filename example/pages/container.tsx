@@ -2,24 +2,33 @@ import React, { FC } from "react";
 import { css, cx } from "emotion";
 import { fullscreen, row, expand } from "@jimengio/flex-styles";
 
-import Home from "./home";
-import Content from "./content";
 import { HashRedirect, findRouteTarget } from "@jimengio/ruled-router/lib/dom";
 import { genRouter, GenRouterTypeMain } from "controller/generated-router";
 import { ISidebarEntry, DocSidebar } from "@jimengio/doc-frame";
+import DemoBarcodePopup from "./demo-barcode-popup";
+import DemoQRCodePopup from "./demo-qrcode-popup";
 
-let items: ISidebarEntry[] = [];
+let items: ISidebarEntry[] = [
+  {
+    title: "QR Code",
+    path: genRouter.qrCode.name,
+  },
+  {
+    title: "Barcode",
+    path: genRouter.barcode.name,
+  },
+];
 
 const renderChildPage = (routerTree: GenRouterTypeMain) => {
   switch (routerTree?.name) {
-    case "home":
-      return <Home />;
-    case "content":
-      return <Content />;
+    case "qr-code":
+      return <DemoQRCodePopup />;
+    case "barcode":
+      return <DemoBarcodePopup />;
     default:
       return (
-        <HashRedirect to={genRouter.home.name} delay={2}>
-          2s to redirect
+        <HashRedirect to={genRouter.qrCode.path()} delay={1}>
+          1s to redirect
         </HashRedirect>
       );
   }
@@ -41,7 +50,7 @@ let Container: FC<{ router: GenRouterTypeMain }> = React.memo((props) => {
   return (
     <div className={cx(fullscreen, row, styleContainer)}>
       <DocSidebar
-        title="Workflow"
+        title="QrCode Popup"
         currentPath={props.router.name}
         onSwitch={(item) => {
           onSwitchPage(item.path);

@@ -1,27 +1,20 @@
-## Workflow
+## QR Code Popup
 
-> A project template based on TypeScript, React, immer, emotion, rex, ruled-router...
+> QR Code and Barcode scanner wrapped with React popup. Based on `react-qr-reader` and `@@ericblade/quagga2`.
+
+Previews http://fe.jimu.io/qrcode-popup/#/qr-code .
 
 ### Usage
 
-Dev:
+[![npm](https://img.shields.io/npm/v/@jimengio/qrcode-popup)](https://www.npmjs.com/package/@jimengio/qrcode-popup)
 
 ```bash
-yarn dll
-yarn dev
+yarn add @jimengio/qrcode-popup
 ```
 
-Compile library:
-
-```bash
-yarn compile
-```
-
-Release:
-
-```bash
-yarn release
-# yarn serve
+```tsx
+import QrCodePopup from "@jimengio/qrcode-popup/lib/qrcode-popup";
+import BarcodePopup from "@jimengio/qrcode-popup/lib/barcode-popup";
 ```
 
 ### Workflow

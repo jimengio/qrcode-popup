@@ -15,23 +15,17 @@ function qsStringify(queries: { [k: string]: any }) {
 // Generated with router-code-generator@0.2.5
 
 export let genRouter = {
-  home: {
-    name: "home",
-    raw: "home",
-    path: () => `/home`,
-    go: () => switchPath(`/home`),
+  qrCode: {
+    name: "qr-code",
+    raw: "qr-code",
+    path: () => `/qr-code`,
+    go: () => switchPath(`/qr-code`),
   },
-  content: {
-    name: "content",
-    raw: "content",
-    path: () => `/content`,
-    go: () => switchPath(`/content`),
-  },
-  else: {
-    name: "else",
-    raw: "else",
-    path: () => `/else`,
-    go: () => switchPath(`/else`),
+  barcode: {
+    name: "barcode",
+    raw: "barcode",
+    path: () => `/barcode`,
+    go: () => switchPath(`/barcode`),
   },
   $: {
     name: "home",
@@ -41,23 +35,17 @@ export let genRouter = {
   },
 };
 
-export type GenRouterTypeMain = GenRouterTypeTree["home"] | GenRouterTypeTree["content"] | GenRouterTypeTree["else"] | GenRouterTypeTree["$"];
+export type GenRouterTypeMain = GenRouterTypeTree["qrCode"] | GenRouterTypeTree["barcode"] | GenRouterTypeTree["$"];
 
 export interface GenRouterTypeTree {
-  home: {
-    name: "home";
+  qrCode: {
+    name: "qr-code";
     params: {};
     query: {};
     next: null;
   };
-  content: {
-    name: "content";
-    params: {};
-    query: {};
-    next: null;
-  };
-  else: {
-    name: "else";
+  barcode: {
+    name: "barcode";
     params: {};
     query: {};
     next: null;
