@@ -2,10 +2,7 @@ import React, { useState, FC, useRef, useEffect, isValidElement } from "react";
 import { css, cx } from "emotion";
 import { row, center } from "@jimengio/shared-utils";
 
-import { QuaggaJSStatic, QuaggaJSResultObject } from "@ericblade/quagga2";
-import QuaggaLib from "@ericblade/quagga2/lib/quagga";
-
-let Quagga: QuaggaJSStatic = QuaggaLib;
+import Quagga, { QuaggaJSResultObject } from "@ericblade/quagga2";
 
 let hintError = () => {
   return `Current host ${location.host} is neither HTTPS nor localhost.`;
@@ -33,7 +30,7 @@ let BarcodeArea: FC<{
           },
         },
         locate: false,
-        numOfWorkers: 0,
+        numOfWorkers: 0, // worker threads not working for now, disable it
         frequency: props.frequency || 120,
         decoder: {
           readers: ["code_128_reader"],

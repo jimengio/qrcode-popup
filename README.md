@@ -1,6 +1,6 @@
 ## QR Code Popup
 
-> QR Code and Barcode scanner wrapped with React popup. Based on `react-qr-reader` and `@@ericblade/quagga2`.
+> QR Code and Barcode scanner wrapped with React popup. Based on `react-qr-reader` and `@ericblade/quagga2`.
 
 Previews http://fe.jimu.io/qrcode-popup/#/qr-code .
 
