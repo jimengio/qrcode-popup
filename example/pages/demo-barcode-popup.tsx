@@ -18,6 +18,7 @@ let DemoBarcodePopup: FC<{}> = React.memo((props) => {
         <Space height={16} />
         <BarcodePopup
           onDetect={(code) => {
+            console.log("got code", code);
             setCode(code);
           }}
           onError={(error) => {
