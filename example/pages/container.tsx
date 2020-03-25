@@ -7,6 +7,7 @@ import { genRouter, GenRouterTypeMain } from "controller/generated-router";
 import { ISidebarEntry, DocSidebar } from "@jimengio/doc-frame";
 import DemoBarcodePopup from "./demo-barcode-popup";
 import DemoQRCodePopup from "./demo-qrcode-popup";
+import DemoZbarScanner from "./demo-zbar-scanner";
 
 let items: ISidebarEntry[] = [
   {
@@ -17,6 +18,10 @@ let items: ISidebarEntry[] = [
     title: "Barcode",
     path: genRouter.barcode.name,
   },
+  {
+    title: "Zbar Scanner",
+    path: genRouter.zbarScanner.name,
+  },
 ];
 
 const renderChildPage = (routerTree: GenRouterTypeMain) => {
@@ -25,6 +30,8 @@ const renderChildPage = (routerTree: GenRouterTypeMain) => {
       return <DemoQRCodePopup />;
     case "barcode":
       return <DemoBarcodePopup />;
+    case "zbar-scanner":
+      return <DemoZbarScanner />;
     default:
       return (
         <HashRedirect to={genRouter.qrCode.path()} delay={1}>
@@ -53,6 +60,7 @@ let Container: FC<{ router: GenRouterTypeMain }> = React.memo((props) => {
         title="QrCode Popup"
         currentPath={props.router.name}
         onSwitch={(item) => {
+          console.log("switch");
           onSwitchPage(item.path);
         }}
         items={items}

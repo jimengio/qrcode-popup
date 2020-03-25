@@ -27,6 +27,12 @@ export let genRouter = {
     path: () => `/barcode`,
     go: () => switchPath(`/barcode`),
   },
+  zbarScanner: {
+    name: "zbar-scanner",
+    raw: "zbar-scanner",
+    path: () => `/zbar-scanner`,
+    go: () => switchPath(`/zbar-scanner`),
+  },
   $: {
     name: "home",
     raw: "",
@@ -35,7 +41,7 @@ export let genRouter = {
   },
 };
 
-export type GenRouterTypeMain = GenRouterTypeTree["qrCode"] | GenRouterTypeTree["barcode"] | GenRouterTypeTree["$"];
+export type GenRouterTypeMain = GenRouterTypeTree["qrCode"] | GenRouterTypeTree["barcode"] | GenRouterTypeTree["zbarScanner"] | GenRouterTypeTree["$"];
 
 export interface GenRouterTypeTree {
   qrCode: {
@@ -46,6 +52,12 @@ export interface GenRouterTypeTree {
   };
   barcode: {
     name: "barcode";
+    params: {};
+    query: {};
+    next: null;
+  };
+  zbarScanner: {
+    name: "zbar-scanner";
     params: {};
     query: {};
     next: null;
