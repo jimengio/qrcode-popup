@@ -13,12 +13,12 @@ let DemoMixedScanner: FC<{}> = React.memo((props) => {
   /** Effects */
   /** Renderers */
   return (
-    <div>
+    <div className={styleContainer}>
       DEMO OF MIXED
       <DocDemo title="Mixed Quagga2 and jsqr">
         <MixedScanner
-          width={400}
-          height={400}
+          width={300}
+          height={300}
           onCodeDetected={(detected, codeKind) => {
             setCode(detected);
             setKind(codeKind);
@@ -33,3 +33,5 @@ let DemoMixedScanner: FC<{}> = React.memo((props) => {
 });
 
 export default DemoMixedScanner;
+
+let styleContainer = css``;

@@ -67,7 +67,6 @@ let Container: FC<{ router: GenRouterTypeMain }> = React.memo((props) => {
         title="QrCode Popup"
         currentPath={props.router.name}
         onSwitch={(item) => {
-          console.log("switch");
           onSwitchPage(item.path);
         }}
         items={items}
@@ -83,4 +82,5 @@ const styleContainer = css``;
 
 let styleBody = css`
   padding: 16px;
+  min-width: 400px;
 `;

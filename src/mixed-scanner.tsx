@@ -1,20 +1,31 @@
 import React, { FC, useEffect, useRef, useState } from "react";
-import { css } from "emotion";
+import { css, cx } from "emotion";
 import useInterval from "use-interval";
 import jqQR from "jsqr";
 import Quagga from "@ericblade/quagga2";
 
 let MixedScanner: FC<{
+  /** 默认 400 */
   width?: number;
+  /** 默认 400 */
   height?: number;
   onCodeDetected: (code: string, kind: "barcode" | "qrcode") => void;
+  onError?: (error: DOMError) => void;
+  className?: string;
+  errorClassName?: string;
+
+  /** 间隔该时长, 进行一次渲染, 默认 100 */
+  renderInterval?: number;
+  /** 多次渲染累积超过该时长, 进行一次扫描, 默认 600 */
+  scanInterval?: number;
 }> = React.memo((props) => {
   let refVideo = useRef<HTMLVideoElement>();
   let refCanvas = useRef<HTMLCanvasElement>();
-  let refScanner = useRef(undefined);
   let refHasVideo = useRef(false);
 
-  let width = props.width || 660;
+  let [failedCamera, setFailedCamera] = useState(false);
+
+  let width = props.width || 400;
   let height = props.height || 400;
 
   let [deviceSize, setDeviceSize] = useState({
@@ -49,7 +60,7 @@ let MixedScanner: FC<{
             size: canvasEl.width,
           },
           decoder: {
-            readers: ["code_128_reader"], // List of active readers
+            readers: ["code_128_reader", "ean_reader"], // List of active readers
           },
         },
         (result) => {
@@ -65,23 +76,45 @@ let MixedScanner: FC<{
 
   useEffect(() => {
     navigator.mediaDevices
-      .getUserMedia({ video: true })
+      .getUserMedia({
+        video: {
+          facingMode: "environment",
+        },
+        audio: false,
+      })
       .then((stream) => {
         refVideo.current.srcObject = stream;
         refHasVideo.current = true;
         let cameraSettings = stream.getTracks()[0].getSettings();
 
-        setDeviceSize({
-          w: cameraSettings.width,
-          h: cameraSettings.height,
-        });
+        if (window.screen.availWidth > window.screen.availHeight) {
+          setDeviceSize({
+            w: cameraSettings.width,
+            h: cameraSettings.height,
+          });
+        } else {
+          // 检测手机竖屏状态, 需要宽高的处理
+          setDeviceSize({
+            w: cameraSettings.height,
+            h: cameraSettings.width,
+          });
+        }
       })
       .catch((error) => {
-        console.error("Failed to capture video", error);
+        console.error(`Failed to request camera stream! (${error?.toString()})`);
+        setFailedCamera(true);
+        if (props.onError != null) {
+          props.onError(error);
+        } else {
+          throw error;
+        }
       });
   }, []);
 
   useInterval(() => {
+    if (failedCamera) {
+      return;
+    }
     if (refHasVideo.current) {
       let context = refCanvas.current.getContext("2d");
       // context.drawImage(refVideo.current, 0, 0, refCanvas.current.width, refCanvas.current.height);
@@ -103,20 +136,31 @@ let MixedScanner: FC<{
       // context.drawImage(refVideo.current, 0, 0, 200, 200);
 
       let now = Date.now();
+      let passedMs = now - refLastScanTime.current;
+      let scanInterval = props.scanInterval ?? 600;
 
-      if (now - refLastScanTime.current > 600) {
+      // TODO, hint lines
+      // context.strokeStyle = `hsla(0,80%,100%, ${Math.min(1, passedMs / scanInterval) * 60}%)`;
+      // context.lineWidth = 8;
+      // context.strokeRect(0, 0, width, height);
+
+      if (passedMs > scanInterval) {
         performCodeScan();
         refLastScanTime.current = now;
       }
     }
-  }, 120);
+  }, props.renderInterval ?? 100);
 
   /** Renderers */
 
+  if (failedCamera) {
+    return <div className={cx(styleFailed, props.errorClassName)}>Failed to access to camera(HTTPS and permissions required)</div>;
+  }
+
   return (
     <>
-      <video ref={refVideo} className={styleVideo} controls autoPlay />
-      <canvas ref={refCanvas} className={styleContainer} width={width} height={height} />
+      <video ref={refVideo} className={styleVideo} autoPlay />
+      <canvas ref={refCanvas} className={cx(styleContainer, props.className)} width={width} height={height} />
     </>
   );
 });
@@ -132,4 +176,11 @@ let styleVideo = css`
   display: none;
   width: 100px;
   height: 100px;
+`;
+
+let styleFailed = css`
+  background-color: #f5222d;
+  color: white;
+  padding: 12px 16px;
+  font-size: 14px;
 `;
