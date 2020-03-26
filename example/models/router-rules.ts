@@ -5,5 +5,6 @@ export const routerRules: IRouteRule[] = [
   { path: "barcode" },
   { path: "zbar-scanner" },
   { path: "mixed-scanner" },
+  { path: "mixed-scanner-popup" },
   { path: "", name: "home" },
 ];

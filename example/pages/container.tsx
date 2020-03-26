@@ -9,6 +9,7 @@ import DemoBarcodePopup from "./demo-barcode-popup";
 import DemoQRCodePopup from "./demo-qrcode-popup";
 import DemoZbarScanner from "./demo-zbar-scanner";
 import DemoMixedScanner from "./demo-mixed-scanner";
+import DemoMixedScannerPopup from "./demo-mixed-scanner-popup";
 
 let items: ISidebarEntry[] = [
   {
@@ -22,6 +23,10 @@ let items: ISidebarEntry[] = [
   {
     title: "Mixed Scanner",
     path: genRouter.mixedScanner.name,
+  },
+  {
+    title: "Mixed Scanner Popup",
+    path: genRouter.mixedScannerPopup.name,
   },
   {
     title: "TODO",
@@ -39,6 +44,8 @@ const renderChildPage = (routerTree: GenRouterTypeMain) => {
       return <DemoZbarScanner />;
     case "mixed-scanner":
       return <DemoMixedScanner />;
+    case "mixed-scanner-popup":
+      return <DemoMixedScannerPopup />;
     default:
       return (
         <HashRedirect to={genRouter.qrCode.path()} delay={1}>
@@ -62,7 +69,7 @@ let Container: FC<{ router: GenRouterTypeMain }> = React.memo((props) => {
   /** Effects */
   /** Renderers */
   return (
-    <div className={cx(fullscreen, row, styleContainer)}>
+    <div className={cx(fullscreen, expand, row, styleContainer)}>
       <DocSidebar
         title="QrCode Popup"
         currentPath={props.router.name}

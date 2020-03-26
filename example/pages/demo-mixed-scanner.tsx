@@ -1,6 +1,6 @@
 import React, { FC, useState } from "react";
 import { css } from "emotion";
-import { DocDemo } from "@jimengio/doc-frame";
+import { DocDemo, DocSnippet } from "@jimengio/doc-frame";
 
 import MixedScanner from "../../src/mixed-scanner";
 
@@ -14,7 +14,6 @@ let DemoMixedScanner: FC<{}> = React.memo((props) => {
   /** Renderers */
   return (
     <div className={styleContainer}>
-      DEMO OF MIXED
       <DocDemo title="Mixed Quagga2 and jsqr">
         <MixedScanner
           width={300}
@@ -27,6 +26,8 @@ let DemoMixedScanner: FC<{}> = React.memo((props) => {
         <div>
           Scan result: {code} - {kind}
         </div>
+
+        <DocSnippet code={exampleCode} />
       </DocDemo>
     </div>
   );
@@ -35,3 +36,15 @@ let DemoMixedScanner: FC<{}> = React.memo((props) => {
 export default DemoMixedScanner;
 
 let styleContainer = css``;
+
+let exampleCode = `
+<MixedScanner
+  width={300}
+  height={300}
+  onCodeDetected={(detected, codeKind) => {
+    setCode(detected);
+    setKind(codeKind);
+  }}
+/>
+
+`;
