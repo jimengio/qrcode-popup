@@ -17,6 +17,8 @@ let DemoMixedScanner: FC<{}> = React.memo((props) => {
       DEMO OF MIXED
       <DocDemo title="Mixed Quagga2 and jsqr">
         <MixedScanner
+          width={400}
+          height={400}
           onCodeDetected={(detected, codeKind) => {
             setCode(detected);
             setKind(codeKind);

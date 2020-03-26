@@ -14,6 +14,14 @@ let MixedScanner: FC<{
   let refScanner = useRef(undefined);
   let refHasVideo = useRef(false);
 
+  let width = props.width || 660;
+  let height = props.height || 400;
+
+  let [deviceSize, setDeviceSize] = useState({
+    w: width,
+    h: height,
+  });
+
   let refLastScanTime = useRef(0);
 
   /** Plugins */
@@ -23,7 +31,6 @@ let MixedScanner: FC<{
     if (refHasVideo.current && refCanvas.current) {
       let canvasEl = refCanvas.current;
       let context = canvasEl.getContext("2d");
-      context.drawImage(refVideo.current, 0, 0, canvasEl.width, canvasEl.height);
       let imageData = context.getImageData(0, 0, canvasEl.width, canvasEl.height);
 
       // console.log(imageData);
@@ -62,6 +69,12 @@ let MixedScanner: FC<{
       .then((stream) => {
         refVideo.current.srcObject = stream;
         refHasVideo.current = true;
+        let cameraSettings = stream.getTracks()[0].getSettings();
+
+        setDeviceSize({
+          w: cameraSettings.width,
+          h: cameraSettings.height,
+        });
       })
       .catch((error) => {
         console.error("Failed to capture video", error);
@@ -71,7 +84,23 @@ let MixedScanner: FC<{
   useInterval(() => {
     if (refHasVideo.current) {
       let context = refCanvas.current.getContext("2d");
-      context.drawImage(refVideo.current, 0, 0, refCanvas.current.width, refCanvas.current.height);
+      // context.drawImage(refVideo.current, 0, 0, refCanvas.current.width, refCanvas.current.height);
+
+      if (width <= deviceSize.w && height <= deviceSize.h) {
+        context.drawImage(refVideo.current, (width - deviceSize.w) * 0.5, (height - deviceSize.h) * 0.5, deviceSize.w, deviceSize.h);
+      } else if (width / height < deviceSize.w / deviceSize.h) {
+        let scaledDeviceHeight = height;
+        let scaledDeviceWidth = deviceSize.w * (height / deviceSize.h);
+        context.drawImage(refVideo.current, (width - scaledDeviceWidth) * 0.5, 0, scaledDeviceWidth, scaledDeviceHeight);
+      } else {
+        // height > device.h
+        let scaledDeviceWidth = width;
+        let scaledDeviceHeight = deviceSize.h * (width / deviceSize.w);
+        context.drawImage(refVideo.current, 0, (height - scaledDeviceHeight) * 0.5, scaledDeviceWidth, scaledDeviceHeight);
+      }
+
+      // 用于参考居中配置
+      // context.drawImage(refVideo.current, 0, 0, 200, 200);
 
       let now = Date.now();
 
@@ -83,9 +112,6 @@ let MixedScanner: FC<{
   }, 120);
 
   /** Renderers */
-
-  let width = props.width || 660;
-  let height = props.height || 400;
 
   return (
     <>

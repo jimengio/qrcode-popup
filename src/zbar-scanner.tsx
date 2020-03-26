@@ -1,6 +1,10 @@
+/**
+ * WIP, not available
+ */
+
 import React, { FC, useEffect, useRef, useState } from "react";
 import { css } from "emotion";
-import Scanner from "zbar.wasm";
+// import Scanner from "zbar.wasm";
 import useInterval from "use-interval";
 
 let ZbarScanner: FC<{
@@ -22,7 +26,6 @@ let ZbarScanner: FC<{
     if (refHasVideo.current && refCanvas.current) {
       let canvasEl = refCanvas.current;
       let context = canvasEl.getContext("2d");
-      context.drawImage(refVideo.current, 0, 0, canvasEl.width, canvasEl.height);
       let imageData = context.getImageData(0, 0, canvasEl.width, canvasEl.height);
 
       // console.log(imageData);
@@ -66,10 +69,10 @@ let ZbarScanner: FC<{
 
   useEffect(() => {
     (async () => {
-      let scanner = await Scanner({
-        locateFile: (file) => "/wasm/zbar.wasm",
-      });
-      refScanner.current = scanner;
+      // let scanner = await Scanner({
+      //   locateFile: (file) => "/wasm/zbar.wasm",
+      // });
+      // refScanner.current = scanner;
     })();
   }, []);
 

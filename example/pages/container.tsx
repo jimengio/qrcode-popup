@@ -20,12 +20,12 @@ let items: ISidebarEntry[] = [
     path: genRouter.barcode.name,
   },
   {
-    title: "Zbar Scanner",
-    path: genRouter.zbarScanner.name,
-  },
-  {
     title: "Mixed Scanner",
     path: genRouter.mixedScanner.name,
+  },
+  {
+    title: "TODO",
+    path: genRouter.zbarScanner.name,
   },
 ];
 
