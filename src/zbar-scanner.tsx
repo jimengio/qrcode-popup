@@ -4,8 +4,8 @@
 
 import React, { FC, useEffect, useRef, useState } from "react";
 import { css } from "emotion";
+import { useRafLoop } from "./util/use-raf-loop";
 // import Scanner from "zbar.wasm";
-import useInterval from "use-interval";
 
 let ZbarScanner: FC<{
   width?: number;
@@ -53,7 +53,7 @@ let ZbarScanner: FC<{
       });
   }, []);
 
-  useInterval(() => {
+  useRafLoop(() => {
     if (refHasVideo.current) {
       let context = refCanvas.current.getContext("2d");
       context.drawImage(refVideo.current, 0, 0, refCanvas.current.width, refCanvas.current.height);
