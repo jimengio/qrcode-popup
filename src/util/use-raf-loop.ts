@@ -5,7 +5,7 @@ const noop = () => {};
 /** add Raf for performance reasons, mainly the structure of use-interval */
 export let useRafLoop = (callback: () => void, delay: number) => {
   const savedCallback = useRef(noop);
-  let refTimeout = useRef<NodeJS.Timeout>();
+  let refTimeout = useRef<number>();
 
   // Remember the latest callback.
   useEffect(() => {
@@ -13,7 +13,7 @@ export let useRafLoop = (callback: () => void, delay: number) => {
   });
 
   let loopCalling = () => {
-    refTimeout.current = setTimeout(() => {
+    refTimeout.current = window.setTimeout(() => {
       savedCallback.current();
 
       requestAnimationFrame(() => {
