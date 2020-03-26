@@ -1,8 +1,8 @@
 import React, { FC, useEffect, useRef, useState } from "react";
 import { css, cx } from "emotion";
-import useInterval from "use-interval";
 import jqQR from "jsqr";
 import Quagga from "@ericblade/quagga2";
+import { useRafLoop } from "./util/use-raf-loop";
 
 let MixedScanner: FC<{
   /** 默认 400 */
@@ -111,7 +111,7 @@ let MixedScanner: FC<{
       });
   }, []);
 
-  useInterval(() => {
+  useRafLoop(() => {
     if (failedCamera) {
       return;
     }
