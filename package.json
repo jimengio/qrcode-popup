@@ -66,6 +66,7 @@
     "emotion": "^10.0.27",
     "font-awesome": "^4.7.0",
     "immer": "^5.1.0",
+    "jsqr": "^1.2.0",
     "lodash": "^4.17.15",
     "punycode": "^2.1.1",
     "query-string": "^6.9.0",

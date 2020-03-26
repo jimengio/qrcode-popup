@@ -8,6 +8,7 @@ import { ISidebarEntry, DocSidebar } from "@jimengio/doc-frame";
 import DemoBarcodePopup from "./demo-barcode-popup";
 import DemoQRCodePopup from "./demo-qrcode-popup";
 import DemoZbarScanner from "./demo-zbar-scanner";
+import DemoMixedScanner from "./demo-mixed-scanner";
 
 let items: ISidebarEntry[] = [
   {
@@ -22,6 +23,10 @@ let items: ISidebarEntry[] = [
     title: "Zbar Scanner",
     path: genRouter.zbarScanner.name,
   },
+  {
+    title: "Mixed Scanner",
+    path: genRouter.mixedScanner.name,
+  },
 ];
 
 const renderChildPage = (routerTree: GenRouterTypeMain) => {
@@ -32,6 +37,8 @@ const renderChildPage = (routerTree: GenRouterTypeMain) => {
       return <DemoBarcodePopup />;
     case "zbar-scanner":
       return <DemoZbarScanner />;
+    case "mixed-scanner":
+      return <DemoMixedScanner />;
     default:
       return (
         <HashRedirect to={genRouter.qrCode.path()} delay={1}>

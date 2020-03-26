@@ -1,12 +1,13 @@
 import React, { FC, useEffect, useRef, useState } from "react";
 import { css } from "emotion";
-import Scanner from "zbar.wasm";
 import useInterval from "use-interval";
+import jqQR from "jsqr";
+import Quagga from "@ericblade/quagga2";
 
-let ZbarScanner: FC<{
+let MixedScanner: FC<{
   width?: number;
   height?: number;
-  onCodeDetected: (code: any[], kind: "barcode" | "qrcode" | "unsure") => void;
+  onCodeDetected: (code: string, kind: "barcode" | "qrcode") => void;
 }> = React.memo((props) => {
   let refVideo = useRef<HTMLVideoElement>();
   let refCanvas = useRef<HTMLCanvasElement>();
@@ -27,12 +28,29 @@ let ZbarScanner: FC<{
 
       // console.log(imageData);
 
-      if (refScanner.current != null) {
-        let result = refScanner.current.scanQrcode(imageData.data);
-        if (result.length > 0) {
-          props.onCodeDetected(result, "unsure");
-        }
+      let detectQrCode = jqQR(imageData.data, canvasEl.width, canvasEl.height);
+      if (detectQrCode != null) {
+        props.onCodeDetected(detectQrCode.data, "qrcode");
+        return;
       }
+
+      Quagga.decodeSingle(
+        {
+          src: canvasEl.toDataURL(),
+          numOfWorkers: 0,
+          inputStream: {
+            size: canvasEl.width,
+          },
+          decoder: {
+            readers: ["code_128_reader"], // List of active readers
+          },
+        },
+        (result) => {
+          if (result?.codeResult != null) {
+            props.onCodeDetected(result.codeResult.code, "barcode");
+          }
+        }
+      );
     }
   };
 
@@ -57,21 +75,12 @@ let ZbarScanner: FC<{
 
       let now = Date.now();
 
-      if (now - refLastScanTime.current > 500) {
+      if (now - refLastScanTime.current > 600) {
         performCodeScan();
         refLastScanTime.current = now;
       }
     }
   }, 120);
-
-  useEffect(() => {
-    (async () => {
-      let scanner = await Scanner({
-        locateFile: (file) => "/wasm/zbar.wasm",
-      });
-      refScanner.current = scanner;
-    })();
-  }, []);
 
   /** Renderers */
 
@@ -86,7 +95,7 @@ let ZbarScanner: FC<{
   );
 });
 
-export default ZbarScanner;
+export default MixedScanner;
 
 let styleContainer = css`
   background-color: hsl(0, 0%, 98%);

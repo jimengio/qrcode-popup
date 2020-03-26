@@ -1,9 +1,10 @@
 import React, { FC, useState } from "react";
 import { css } from "emotion";
 import { DocDemo } from "@jimengio/doc-frame";
-import ZbarScanner from "../../src/zbar-scanner";
 
-let DemoZbarScanner: FC<{}> = React.memo((props) => {
+import MixedScanner from "../../src/mixed-scanner";
+
+let DemoMixedScanner: FC<{}> = React.memo((props) => {
   let [code, setCode] = useState("");
   let [kind, setKind] = useState(null);
 
@@ -13,19 +14,20 @@ let DemoZbarScanner: FC<{}> = React.memo((props) => {
   /** Renderers */
   return (
     <div>
-      <DocDemo title="Zbar Scanner">
-        <ZbarScanner
-          onCodeDetected={(detected, kind) => {
-            setCode(JSON.stringify(detected));
-            setKind(kind);
+      DEMO OF MIXED
+      <DocDemo title="Mixed Quagga2 and jsqr">
+        <MixedScanner
+          onCodeDetected={(detected, codeKind) => {
+            setCode(detected);
+            setKind(codeKind);
           }}
         />
         <div>
-          Result: {code} - {kind}
+          Scan result: {code} - {kind}
         </div>
       </DocDemo>
     </div>
   );
 });
 
-export default DemoZbarScanner;
+export default DemoMixedScanner;
