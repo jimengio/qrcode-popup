@@ -199,10 +199,7 @@ let styleFailed = css`
   color: white;
   padding: 12px 16px;
   font-size: 14px;
-  margin-left: auto;
-  margin-right: auto;
-  margin-bottom: auto;
-  margin-top: 10vw;
+  margin: 10vw auto auto auto;
   max-width: 90vw;
   word-break: break-all;
   line-height: 21px;
