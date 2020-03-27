@@ -9,6 +9,7 @@ let DemoMixedScannerPopup: FC<{}> = React.memo((props) => {
   /** Plugins */
 
   let popupScanner = usePopupMixedScanner({
+    errorLocale: "扫码错误: 无法获取相机图像 无法获取相机图像(可能是因为没有 HTTPS 权限)",
     onCodeDetected: (code, codeType) => {
       console.log(code, codeType);
     },

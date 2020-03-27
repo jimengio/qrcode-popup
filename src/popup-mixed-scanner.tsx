@@ -1,16 +1,37 @@
-import React, { useState, ReactNode, useRef } from "react";
+import React, { useState, ReactNode, useRef, useEffect } from "react";
 import { css } from "emotion";
 import MixedScanner from "./mixed-scanner";
 
 type FuncDetectedCode = (code: string, codeType: "qrcode" | "barcode") => void;
 
-export let usePopupMixedScanner = (props: { onCodeDetected?: FuncDetectedCode }) => {
+export let usePopupMixedScanner = (props: {
+  errorLocale?: string;
+  /** 预览扫码结果时长 */
+  previewTime?: number;
+  onCodeDetected?: FuncDetectedCode;
+}) => {
   // Model
   let [scanning, setScanning] = useState(false);
+  let [tempResult, setTempResult] = useState(null);
 
   let callbackRef = useRef(undefined as FuncDetectedCode);
 
   // Plugins
+
+  // Effects
+
+  useEffect(() => {
+    let listener = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setScanning(false);
+      }
+    };
+    window.addEventListener("keydown", listener);
+
+    return () => {
+      window.removeEventListener("keydown", listener);
+    };
+  }, []);
 
   // View
 
@@ -21,23 +42,31 @@ export let usePopupMixedScanner = (props: { onCodeDetected?: FuncDetectedCode })
 
   let ui = scanning ? (
     <div className={styleContainer}>
-      <MixedScanner
-        className={styleScanner}
-        width={estimatedSize}
-        height={estimatedSize}
-        onCodeDetected={(code, codeType) => {
-          if (callbackRef.current != null) {
-            callbackRef.current(code, codeType);
-            callbackRef.current = null;
-          }
+      <div className={styleScanner}>
+        <MixedScanner
+          width={estimatedSize}
+          height={estimatedSize}
+          errorLocale={props.errorLocale}
+          showStaticImage={tempResult != null}
+          onCodeDetected={(code, codeType) => {
+            setTempResult(code);
 
-          if (props.onCodeDetected != null) {
-            props.onCodeDetected(code, codeType);
-          }
+            setTimeout(() => {
+              if (callbackRef.current != null) {
+                callbackRef.current(code, codeType);
+                callbackRef.current = null;
+              }
 
-          setScanning(false);
-        }}
-      />
+              if (props.onCodeDetected != null) {
+                props.onCodeDetected(code, codeType);
+              }
+
+              setScanning(false);
+            }, props.previewTime || 800);
+          }}
+        />
+        {tempResult != null ? <div className={styleTempResult}>{tempResult}</div> : null}
+      </div>
 
       <div
         className={styleClose}
@@ -52,8 +81,9 @@ export let usePopupMixedScanner = (props: { onCodeDetected?: FuncDetectedCode })
 
   // Controller
   let popup = (callback?: FuncDetectedCode) => {
-    callbackRef.current = callback;
+    setTempResult(null);
     setScanning(true);
+    callbackRef.current = callback;
   };
 
   return { ui, popup };
@@ -86,4 +116,18 @@ let styleScanner = css`
   margin-top: 20%;
   margin-top: min(80px, 20%);
   margin-bottom: auto;
+  position: relative;
+`;
+
+let styleTempResult = css`
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 16px;
+  font-size: 20px;
+  text-align: center;
+  font-family: Source Code Pro, Menlo, Roboto Mono, Consolas, monospace;
+  color: white;
+  background-color: hsl(0, 0%, 0%, 0.4);
 `;

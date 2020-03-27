@@ -18,6 +18,11 @@ let MixedScanner: FC<{
   renderInterval?: number;
   /** 多次渲染累积超过该时长, 进行一次扫描, 默认 600 */
   scanInterval?: number;
+
+  errorLocale?: string;
+
+  /** 暂时关闭渲染 */
+  showStaticImage?: boolean;
 }> = React.memo((props) => {
   let refVideo = useRef<HTMLVideoElement>();
   let refCanvas = useRef<HTMLCanvasElement>();
@@ -75,6 +80,10 @@ let MixedScanner: FC<{
   /** Effects */
 
   useEffect(() => {
+    if (navigator.mediaDevices == null) {
+      setFailedCamera(true);
+      return;
+    }
     navigator.mediaDevices
       .getUserMedia({
         video: {
@@ -115,6 +124,11 @@ let MixedScanner: FC<{
     if (failedCamera) {
       return;
     }
+
+    if (props.showStaticImage) {
+      // 展示已有的图像, 不再更新
+      return;
+    }
     if (refHasVideo.current) {
       let context = refCanvas.current.getContext("2d");
       // context.drawImage(refVideo.current, 0, 0, refCanvas.current.width, refCanvas.current.height);
@@ -153,8 +167,10 @@ let MixedScanner: FC<{
 
   /** Renderers */
 
+  let errorLocale = props.errorLocale || "Failed to access to camera(HTTPS and permissions required)";
+
   if (failedCamera) {
-    return <div className={cx(styleFailed, props.errorClassName)}>Failed to access to camera(HTTPS and permissions required)</div>;
+    return <div className={cx(styleFailed, props.errorClassName)}>{errorLocale}</div>;
   }
 
   return (
@@ -168,7 +184,7 @@ let MixedScanner: FC<{
 export default MixedScanner;
 
 let styleContainer = css`
-  background-color: hsl(0, 0%, 98%);
+  background-color: hsl(0, 0%, 0%);
 `;
 
 let styleVideo = css`
@@ -183,4 +199,11 @@ let styleFailed = css`
   color: white;
   padding: 12px 16px;
   font-size: 14px;
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: auto;
+  margin-top: 10vw;
+  max-width: 90vw;
+  word-break: break-all;
+  line-height: 21px;
 `;
