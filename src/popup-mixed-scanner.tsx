@@ -90,6 +90,7 @@ export let usePopupMixedScanner = (props: {
 };
 
 let styleContainer = css`
+  z-index: 200; /* same as barcode popup */
   position: fixed;
   top: 0;
   left: 0;
