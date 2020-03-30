@@ -77,3 +77,8 @@ exports.matchTsReleaseRule = {
     },
   ],
 };
+
+exports.matchWasmRule = {
+  test: /\.wasm$/,
+  loaders: ["wasm-loader"],
+};

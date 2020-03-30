@@ -7,9 +7,10 @@ let HtmlWebpackTagsPlugin = require("html-webpack-tags-plugin");
 let DuplicatePackageCheckerPlugin = require("duplicate-package-checker-webpack-plugin");
 let ForkTsCheckerWebpackPlugin = require("fork-ts-checker-webpack-plugin");
 let MiniCssExtractPlugin = require("mini-css-extract-plugin");
+let CopyWebpackPlugin = require("copy-webpack-plugin");
 let ProgressPlugin = require("@jimengio/ci-progress-webpack-plugin");
 
-let { matchExtractCssRule, matchFontsRule, matchTsReleaseRule } = require("./shared");
+let { matchExtractCssRule, matchFontsRule, matchTsReleaseRule, matchWasmRule } = require("./shared");
 let splitChunks = require("./split-chunks");
 let dllManifest = require("./dll/manifest-release.json");
 
@@ -32,11 +33,15 @@ module.exports = {
     splitChunks: splitChunks,
   },
   module: {
-    rules: [matchExtractCssRule, matchFontsRule, matchTsReleaseRule],
+    rules: [matchExtractCssRule, matchFontsRule, matchTsReleaseRule, matchWasmRule],
   },
   resolve: {
     extensions: [".tsx", ".ts", ".js"],
     modules: [path.join(__dirname, "../example"), "node_modules"],
+  },
+  externals: {
+    fs: true,
+    path: true,
   },
   stats: {
     all: false,
@@ -67,6 +72,7 @@ module.exports = {
       template: "template.ejs",
       trackingCode,
     }),
+    new CopyWebpackPlugin([{ from: "node_modules/zbar.wasm/data/zbar.wasm", to: "wasm/" }], {}),
     new HtmlWebpackTagsPlugin({
       tags: [`${dllManifest.name}.js`],
       append: false,

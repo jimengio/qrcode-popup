@@ -3,8 +3,9 @@ var webpack = require("webpack");
 var HtmlWebpackPlugin = require("html-webpack-plugin");
 let HtmlWebpackTagsPlugin = require("html-webpack-tags-plugin");
 let ForkTsCheckerWebpackPlugin = require("fork-ts-checker-webpack-plugin");
+let CopyWebpackPlugin = require("copy-webpack-plugin");
 
-let { matchCssRule, matchFontsRule, matchTsRule } = require("./shared");
+let { matchCssRule, matchFontsRule, matchTsRule, matchWasmRule } = require("./shared");
 let splitChunks = require("./split-chunks");
 let dllManifest = require("./dll/manifest.json");
 
@@ -17,11 +18,15 @@ module.exports = {
   },
   devtool: "cheap-source-map",
   module: {
-    rules: [matchCssRule, matchFontsRule, matchTsRule],
+    rules: [matchCssRule, matchFontsRule, matchTsRule, matchWasmRule],
   },
   resolve: {
     extensions: [".tsx", ".ts", ".js"],
     modules: [path.join(__dirname, "../example"), "node_modules"],
+  },
+  externals: {
+    fs: true,
+    path: true,
   },
   devServer: {
     contentBase: __dirname,
@@ -58,6 +63,7 @@ module.exports = {
       template: "template.ejs",
       trackingCode: "",
     }),
+    new CopyWebpackPlugin([{ from: "node_modules/zbar.wasm/data/zbar.wasm", to: "wasm/" }], {}),
     new HtmlWebpackTagsPlugin({
       tags: [`dll/${dllManifest.name}.js`],
       append: false,
