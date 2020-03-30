@@ -1,6 +1,6 @@
 import React, { useState, FC, useRef, useEffect, isValidElement } from "react";
 import { css, cx } from "emotion";
-import { row, center } from "@jimengio/shared-utils";
+import { row, center } from "@jimengio/flex-styles";
 
 import Quagga, { QuaggaJSResultObject } from "@ericblade/quagga2";
 import BarcodeArea from "./barcode-area";
