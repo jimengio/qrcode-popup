@@ -24,7 +24,7 @@ let DemoMixedScannerPopup: FC<{}> = React.memo((props) => {
         <button
           onClick={() => {
             popupScanner.popup((code, codeType) => {
-              console.log("got code", code);
+              console.log("got code", JSON.stringify(code));
               setResult(code);
             });
           }}

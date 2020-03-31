@@ -305,10 +305,10 @@
   resolved "https://registry.npmjs.org/@jimengio/ci-progress-webpack-plugin/-/ci-progress-webpack-plugin-0.1.1.tgz#3029a2be1df8f0432fc85a8afa926adc004c4f0a"
   integrity sha512-uVf9yrZHFzT6FC+ZKeuv2GjqKoBaB+ceKZDIqqGH9cL/8iWmvXKKB6LXkCOVVEr9nsJaHOEKQfNGUSELgUzXPw==
 
-"@jimengio/doc-frame@^0.1.12-a1":
-  version "0.1.12-a1"
-  resolved "https://registry.npmjs.org/@jimengio/doc-frame/-/doc-frame-0.1.12-a1.tgz#c622686bdddeb21bacfa83c77cc35cd36a122d69"
-  integrity sha512-AsysDV4JSxjCZv8KEw8zlxn7wzOHLC+W3jTakR+J7iRBSPZ6SnuKVf7dhGRt4hGiTle4mZjC13k0S9DxTV8qlw==
+"@jimengio/doc-frame@^0.1.12":
+  version "0.1.12"
+  resolved "https://registry.npmjs.org/@jimengio/doc-frame/-/doc-frame-0.1.12.tgz#c0114929bf4c49c9e8c34968a26baf7b79f936d3"
+  integrity sha512-E5svoYU6SZwz2oLb3iRipT6bMzb8OYzCvNuAvApGeatFfjMzq/Sci5ID1uR2jpv9ORKkg6k+2+iuYBx7YD40uA==
   dependencies:
     "@types/highlight.js" "^9.12.3"
     highlight.js "^9.17.1"
@@ -528,10 +528,15 @@
   resolved "https://registry.npmjs.org/@types/minimatch/-/minimatch-3.0.3.tgz#3dca0e3f33b200fc7d1139c0cd96c1268cadfd9d"
   integrity sha512-tHq6qdbT9U1IRSGf14CL0pUlULksvY9OZ+5eEgl1N7t+OA3tGvNpxJCzuKQlsNgCVwbAs670L1vcVQi8j9HjnA==
 
-"@types/node@*", "@types/node@^13.1.2":
+"@types/node@*":
   version "13.9.5"
   resolved "https://registry.npmjs.org/@types/node/-/node-13.9.5.tgz#59738bf30b31aea1faa2df7f4a5f55613750cf00"
   integrity sha512-hkzMMD3xu6BrJpGVLeQ3htQQNAcOrJjX7WFmtK8zWQpz2UJf13LCFF2ALA7c9OVdvc2vQJeDdjfR35M0sBCxvw==
+
+"@types/node@^13.9.8":
+  version "13.9.8"
+  resolved "https://registry.npmjs.org/@types/node/-/node-13.9.8.tgz#09976420fc80a7a00bf40680c63815ed8c7616f4"
+  integrity sha512-1WgO8hsyHynlx7nhP1kr0OFzsgKz5XDQL+Lfc3b1Q3qIln/n8cKD4m09NJ0+P1Rq7Zgnc7N0+SsMnoD1rEb0kA==
 
 "@types/node@^6.14.4":
   version "6.14.9"
@@ -582,10 +587,10 @@
     "@types/prop-types" "*"
     csstype "^2.2.0"
 
-"@types/react@^16.9.27":
-  version "16.9.27"
-  resolved "https://registry.npmjs.org/@types/react/-/react-16.9.27.tgz#7fc5db99e3ec3f21735b44d3560cff684856814a"
-  integrity sha512-j+RvQb9w7a2kZFBOgTh+s/elCwtqWUMN6RJNdmz0ntmwpeoMHKnyhUcmYBu7Yw94Rtj9938D+TJSn6WGcq2+OA==
+"@types/react@^16.9.29":
+  version "16.9.29"
+  resolved "https://registry.npmjs.org/@types/react/-/react-16.9.29.tgz#41c0353b5ea916cdb7a7e89b80b09b268c87a2f8"
+  integrity sha512-aE5sV9XVqKvIR8Lqa73hXvlqBzz5hBG0jtV9jZ1uuEWRmW8KN/mdQQmsYlPx6z/b2xa8zR3jtk7WoT+2/m4suA==
   dependencies:
     "@types/prop-types" "*"
     csstype "^2.2.0"
