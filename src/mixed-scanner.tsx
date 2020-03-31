@@ -70,7 +70,7 @@ let MixedScanner: FC<{
         },
         (result) => {
           if (result?.codeResult != null) {
-            props.onCodeDetected(result.codeResult.code, "barcode");
+            props.onCodeDetected(result.codeResult.code.trim(), "barcode");
           }
         }
       );
