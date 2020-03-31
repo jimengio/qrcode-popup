@@ -53,7 +53,7 @@ let MixedScanner: FC<{
 
       let detectQrCode = jqQR(imageData.data, canvasEl.width, canvasEl.height);
       if (detectQrCode != null) {
-        props.onCodeDetected(detectQrCode.data, "qrcode");
+        props.onCodeDetected(detectQrCode.data.trim(), "qrcode");
         return;
       }
 

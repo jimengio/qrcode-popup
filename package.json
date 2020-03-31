@@ -1,6 +1,6 @@
 {
   "name": "@jimengio/qrcode-popup",
-  "version": "0.2.2",
+  "version": "0.2.3-a1",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -20,14 +20,14 @@
   "license": "MIT",
   "devDependencies": {
     "@jimengio/ci-progress-webpack-plugin": "^0.1.0",
-    "@jimengio/doc-frame": "^0.1.12-a1",
+    "@jimengio/doc-frame": "^0.1.12",
     "@jimengio/flex-styles": "^0.1.6",
     "@jimengio/router-code-generator": "^0.2.5",
     "@jimengio/ruled-router": "^0.2.23",
-    "@types/node": "^13.1.2",
+    "@types/node": "^13.9.8",
     "@types/prettier": "^1.19.1",
     "@types/query-string": "^6.3.0",
-    "@types/react": "^16.9.27",
+    "@types/react": "^16.9.29",
     "@types/react-dom": "^16.9.5",
     "@types/react-qr-reader": "^2.1.2",
     "cache-loader": "^4.1.0",
