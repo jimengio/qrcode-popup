@@ -14,7 +14,7 @@ let { matchExtractCssRule, matchFontsRule, matchTsReleaseRule, matchWasmRule } =
 let splitChunks = require("./split-chunks");
 let dllManifest = require("./dll/manifest-release.json");
 
-let trackingCode = fs.readFileSync(path.join(__dirname, "ga.html"), "utf8");
+let trackingCode = "";
 
 module.exports = {
   mode: "production",
