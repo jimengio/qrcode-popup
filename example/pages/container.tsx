@@ -10,6 +10,8 @@ import DemoQRCodePopup from "./demo-qrcode-popup";
 import DemoZbarScanner from "./demo-zbar-scanner";
 import DemoMixedScanner from "./demo-mixed-scanner";
 import DemoMixedScannerPopup from "./demo-mixed-scanner-popup";
+import DemoZxingScanner from "./demo-zxing-scanner";
+import DemoZxingScannerPopup from "./demo-zxing-scanner-popup";
 
 let items: ISidebarEntry[] = [
   {
@@ -29,6 +31,14 @@ let items: ISidebarEntry[] = [
     path: genRouter.mixedScannerPopup.name,
   },
   {
+    title: "Zxing Scanner",
+    path: genRouter.zxingScanner.name,
+  },
+  {
+    title: "Zxing Scanner Popup",
+    path: genRouter.zxingScannerPopup.name,
+  },
+  {
     title: "TODO",
     path: genRouter.zbarScanner.name,
   },
@@ -46,6 +56,10 @@ const renderChildPage = (routerTree: GenRouterTypeMain) => {
       return <DemoMixedScanner />;
     case "mixed-scanner-popup":
       return <DemoMixedScannerPopup />;
+    case "zxing-scanner":
+      return <DemoZxingScanner />;
+    case "zxing-scanner-popup":
+      return <DemoZxingScannerPopup />;
     default:
       return (
         <HashRedirect to={genRouter.qrCode.path()} delay={1}>

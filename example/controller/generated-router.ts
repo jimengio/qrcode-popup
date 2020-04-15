@@ -12,7 +12,7 @@ function qsStringify(queries: { [k: string]: any }) {
 
 // generated
 
-// Generated with router-code-generator@0.2.5
+// Generated with router-code-generator@0.2.6
 
 export let genRouter = {
   qrCode: {
@@ -45,6 +45,18 @@ export let genRouter = {
     path: () => `/mixed-scanner-popup`,
     go: () => switchPath(`/mixed-scanner-popup`),
   },
+  zxingScanner: {
+    name: "zxing-scanner",
+    raw: "zxing-scanner",
+    path: () => `/zxing-scanner`,
+    go: () => switchPath(`/zxing-scanner`),
+  },
+  zxingScannerPopup: {
+    name: "zxing-scanner-popup",
+    raw: "zxing-scanner-popup",
+    path: () => `/zxing-scanner-popup`,
+    go: () => switchPath(`/zxing-scanner-popup`),
+  },
   $: {
     name: "home",
     raw: "",
@@ -59,6 +71,8 @@ export type GenRouterTypeMain =
   | GenRouterTypeTree["zbarScanner"]
   | GenRouterTypeTree["mixedScanner"]
   | GenRouterTypeTree["mixedScannerPopup"]
+  | GenRouterTypeTree["zxingScanner"]
+  | GenRouterTypeTree["zxingScannerPopup"]
   | GenRouterTypeTree["$"];
 
 export interface GenRouterTypeTree {
@@ -88,6 +102,18 @@ export interface GenRouterTypeTree {
   };
   mixedScannerPopup: {
     name: "mixed-scanner-popup";
+    params: {};
+    query: {};
+    next: null;
+  };
+  zxingScanner: {
+    name: "zxing-scanner";
+    params: {};
+    query: {};
+    next: null;
+  };
+  zxingScannerPopup: {
+    name: "zxing-scanner-popup";
     params: {};
     query: {};
     next: null;
