@@ -10,6 +10,7 @@ import DemoQRCodePopup from "./demo-qrcode-popup";
 import DemoZbarScanner from "./demo-zbar-scanner";
 import DemoMixedScanner from "./demo-mixed-scanner";
 import DemoMixedScannerPopup from "./demo-mixed-scanner-popup";
+import DemoFileMixedScanner from "./demo-file-mixed-scanner";
 
 let items: ISidebarEntry[] = [
   {
@@ -29,6 +30,10 @@ let items: ISidebarEntry[] = [
     path: genRouter.mixedScannerPopup.name,
   },
   {
+    title: "File Mixed Scanner",
+    path: genRouter.fileMixedScanner.name,
+  },
+  {
     title: "TODO",
     path: genRouter.zbarScanner.name,
   },
@@ -46,9 +51,11 @@ const renderChildPage = (routerTree: GenRouterTypeMain) => {
       return <DemoMixedScanner />;
     case "mixed-scanner-popup":
       return <DemoMixedScannerPopup />;
+    case "file-mixed-scanner":
+      return <DemoFileMixedScanner />;
     default:
       return (
-        <HashRedirect to={genRouter.qrCode.path()} delay={1}>
+        <HashRedirect to={genRouter.qrCode.path()} noDelay>
           1s to redirect
         </HashRedirect>
       );

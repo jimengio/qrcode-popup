@@ -12,7 +12,7 @@ function qsStringify(queries: { [k: string]: any }) {
 
 // generated
 
-// Generated with router-code-generator@0.2.5
+// Generated with router-code-generator@0.2.6
 
 export let genRouter = {
   qrCode: {
@@ -45,6 +45,12 @@ export let genRouter = {
     path: () => `/mixed-scanner-popup`,
     go: () => switchPath(`/mixed-scanner-popup`),
   },
+  fileMixedScanner: {
+    name: "file-mixed-scanner",
+    raw: "file-mixed-scanner",
+    path: () => `/file-mixed-scanner`,
+    go: () => switchPath(`/file-mixed-scanner`),
+  },
   $: {
     name: "home",
     raw: "",
@@ -59,6 +65,7 @@ export type GenRouterTypeMain =
   | GenRouterTypeTree["zbarScanner"]
   | GenRouterTypeTree["mixedScanner"]
   | GenRouterTypeTree["mixedScannerPopup"]
+  | GenRouterTypeTree["fileMixedScanner"]
   | GenRouterTypeTree["$"];
 
 export interface GenRouterTypeTree {
@@ -88,6 +95,12 @@ export interface GenRouterTypeTree {
   };
   mixedScannerPopup: {
     name: "mixed-scanner-popup";
+    params: {};
+    query: {};
+    next: null;
+  };
+  fileMixedScanner: {
+    name: "file-mixed-scanner";
     params: {};
     query: {};
     next: null;
