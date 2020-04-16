@@ -8,5 +8,6 @@ export const routerRules: IRouteRule[] = [
   { path: "mixed-scanner-popup" },
   { path: "zxing-scanner" },
   { path: "zxing-scanner-popup" },
+  { path: "file-mixed-scanner" },
   { path: "", name: "home" },
 ];
