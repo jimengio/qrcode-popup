@@ -19,6 +19,7 @@ let DemoZxingScanner: FC<{}> = React.memo((props) => {
           width={300}
           height={300}
           onCodeDetected={(detected, codeKind) => {
+            console.log("got code", JSON.stringify(detected));
             setCode(detected);
             setKind(codeKind);
           }}

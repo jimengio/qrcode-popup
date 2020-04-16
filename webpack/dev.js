@@ -5,7 +5,7 @@ let HtmlWebpackTagsPlugin = require("html-webpack-tags-plugin");
 let ForkTsCheckerWebpackPlugin = require("fork-ts-checker-webpack-plugin");
 let CopyWebpackPlugin = require("copy-webpack-plugin");
 
-let { matchCssRule, matchFontsRule, matchTsRule, matchWasmRule } = require("./shared");
+let { matchCssRule, matchFontsRule, matchTsRule } = require("./shared");
 let splitChunks = require("./split-chunks");
 let dllManifest = require("./dll/manifest.json");
 
@@ -18,7 +18,7 @@ module.exports = {
   },
   devtool: "cheap-source-map",
   module: {
-    rules: [matchCssRule, matchFontsRule, matchTsRule, matchWasmRule],
+    rules: [matchCssRule, matchFontsRule, matchTsRule],
   },
   resolve: {
     extensions: [".tsx", ".ts", ".js"],
@@ -53,6 +53,9 @@ module.exports = {
     splitChunks: splitChunks,
   },
   plugins: [
+    new webpack.DefinePlugin({
+      GlobalZxingWasmPath: JSON.stringify("/wasm/zxing-go.wasm"),
+    }),
     new ForkTsCheckerWebpackPlugin({ checkSyntacticErrors: true, async: false }),
     new webpack.DllReferencePlugin({
       manifest: path.resolve(__dirname, "dll/manifest.json"),
@@ -64,6 +67,7 @@ module.exports = {
       trackingCode: "",
     }),
     new CopyWebpackPlugin([{ from: "node_modules/zbar.wasm/data/zbar.wasm", to: "wasm/" }], {}),
+    new CopyWebpackPlugin([{ from: "src/assets/zxing-go.wasm", to: "wasm/" }], {}),
     new HtmlWebpackTagsPlugin({
       tags: [`dll/${dllManifest.name}.js`],
       append: false,
