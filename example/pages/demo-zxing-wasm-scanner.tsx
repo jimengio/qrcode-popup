@@ -15,7 +15,7 @@ let DemoZxingWasmScanner: FC<{ className?: string }> = React.memo((props) => {
           onCodeDetected={(code) => {
             console.log("got code", JSON.stringify(code));
           }}
-          zxingWasmPath="/wasm/zxing-go.wasm"
+          zxingWasmPath="wasm/zxing-go.wasm"
         />
       </DocDemo>
     </div>

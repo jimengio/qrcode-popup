@@ -55,7 +55,7 @@ module.exports = {
   },
   plugins: [
     new webpack.DefinePlugin({
-      GlobalZxingWasmPath: JSON.stringify("/wasm/zxing-go.wasm"),
+      GlobalZxingWasmPath: JSON.stringify("wasm/zxing-go.wasm"),
     }),
     new ForkTsCheckerWebpackPlugin({ checkSyntacticErrors: true, async: false }),
     new MiniCssExtractPlugin({

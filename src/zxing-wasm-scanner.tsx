@@ -176,7 +176,7 @@ let ZxingWasmScanner: FC<{
     }
 
     let mod, inst;
-    WebAssembly.instantiateStreaming(fetch("/wasm/zxing-go.wasm"), go.importObject)
+    WebAssembly.instantiateStreaming(fetch(props.zxingWasmPath), go.importObject)
       .then((result) => {
         mod = result.module;
         inst = result.instance;

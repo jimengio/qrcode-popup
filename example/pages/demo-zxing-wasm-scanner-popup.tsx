@@ -10,7 +10,7 @@ let DemoMixedScannerPopup: FC<{}> = React.memo((props) => {
 
   let popupScanner = usePopupZxingWasmScanner({
     errorLocale: "扫码错误: 无法获取相机图像 无法获取相机图像(可能是因为没有 HTTPS 权限)",
-    zxingWasmPath: "/wasm/zxing-go.wasm",
+    zxingWasmPath: "wasm/zxing-go.wasm",
     onCodeDetected: (code, codeType) => {
       console.log(code, codeType);
     },
