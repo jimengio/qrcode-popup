@@ -6,7 +6,8 @@ import { MultiFormatReader, BarcodeFormat, DecodeHintType, HTMLCanvasElementLumi
 
 let codeReader = new MultiFormatReader();
 let jsHints = new Map();
-let jsFormats = [BarcodeFormat.CODE_128, BarcodeFormat.QR_CODE, BarcodeFormat.UPC_EAN_EXTENSION];
+let jsFormats = [BarcodeFormat.CODE_128, BarcodeFormat.QR_CODE];
+// TODO: not sure about format: BarcodeFormat.UPC_EAN_EXTENSION
 jsHints.set(DecodeHintType.POSSIBLE_FORMATS, jsFormats);
 jsHints.set(DecodeHintType.TRY_HARDER, true);
 codeReader.setHints(jsHints);
@@ -35,7 +36,7 @@ let ZxingScanner: FC<{
   let [failedCamera, setFailedCamera] = useState(false);
 
   /** exprimental code for grabFrame */
-  // let refImageCapture = useRef<any>();
+  let refImageCapture = useRef<any>();
 
   let [deviceSize, setDeviceSize] = useState({
     w: 200, // 设置比较小的初始值
@@ -46,9 +47,8 @@ let ZxingScanner: FC<{
 
   // 显示区域的 width/height 注意不能超过 camera 返回的宽度高度
 
-  // 默认放开到 800
-  let scaledWidth = props.scaledWidth || 800;
-  let scaledHeight = Math.round((scaledWidth / deviceSize.w) * deviceSize.h);
+  let scaledWidth = deviceSize.w;
+  let scaledHeight = deviceSize.h;
 
   /** Plugins */
   /** Methods */
@@ -58,7 +58,7 @@ let ZxingScanner: FC<{
       return;
     }
 
-    if (!refHasVideo.current || !refCanvas.current) {
+    if (!refHasVideo.current || !refCanvas.current || !refImageCapture.current) {
       return;
     }
 
@@ -68,8 +68,11 @@ let ZxingScanner: FC<{
     let t0 = performance.now();
     scaledContext.clearRect(0, 0, scaledWidth, scaledHeight);
 
+    // let grabbedBitmap = await refImageCapture.current.grabFrame();
     // console.log("drawing", 0, 0, deviceSize.w, deviceSize.h, 0, 0, scaledWidth, scaledHeight);
     scaledContext.drawImage(refVideo.current, 0, 0, deviceSize.w, deviceSize.h, 0, 0, scaledWidth, scaledHeight);
+
+    // console.log(scaledWidth, scaledHeight, deviceSize, jsHints);
 
     let t1 = performance.now();
     // console.log("time cost for drawing", t1 - t0);
@@ -77,13 +80,12 @@ let ZxingScanner: FC<{
     let luminanceSource = new HTMLCanvasElementLuminanceSource(scaledCanvas);
     let hybridBinarizer = new HybridBinarizer(luminanceSource);
 
-    // let grabbedBitmap = await refImageCapture.current.grabFrame();
-    let bitmap = new BinaryBitmap(hybridBinarizer);
-
     // console.log("compare", grabbedBitmap, bitmap);
 
     try {
-      let result = codeReader.decode(bitmap, jsHints);
+      /** CONFUSION: faster to pass hybridBinarizer directly */
+      // let bitmap = new BinaryBitmap(hybridBinarizer);
+      let result = codeReader.decode(hybridBinarizer as any, jsHints);
 
       if (result != null && result.getText() != "") {
         props.onCodeDetected(result.getText(), null);
@@ -115,7 +117,7 @@ let ZxingScanner: FC<{
       .then((stream) => {
         refVideo.current.srcObject = stream;
 
-        // refImageCapture.current = new window["ImageCapture"](stream.getTracks()[0]);
+        refImageCapture.current = new window["ImageCapture"](stream.getTracks()[0]);
 
         refHasVideo.current = true;
         let cameraSettings = stream.getTracks()[0].getSettings();
