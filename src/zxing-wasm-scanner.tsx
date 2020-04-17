@@ -16,17 +16,14 @@ if (!WebAssembly.instantiateStreaming) {
 }
 
 let ZxingWasmScanner: FC<{
-  /** 默认 400 */
-  width?: number;
-  /** 默认 400 */
-  height?: number;
+  /** 参考值, 内部按照 Video 适配 */
+
   onCodeDetected: (code: string, kind: "barcode" | "qrcode") => void;
   onError?: (error: DOMError) => void;
   className?: string;
   errorClassName?: string;
+  scaledWidth?: number;
 
-  /** 间隔该时长, 进行一次渲染, 默认 100 */
-  renderInterval?: number;
   /** 多次渲染累积超过该时长, 进行一次扫描, 默认 600 */
   scanInterval?: number;
 
@@ -44,36 +41,57 @@ let ZxingWasmScanner: FC<{
 
   let [failedCamera, setFailedCamera] = useState(false);
 
-  let width = props.width || 400;
-  let height = props.height || 400;
-
   let [deviceSize, setDeviceSize] = useState({
-    w: width,
-    h: height,
+    w: 200, // 设置比较小的初始值
+    h: 200,
   });
 
-  let refLastScanTime = useRef(0);
+  // console.log("deviceSize", deviceSize);
+
+  // 显示区域的 width/height 注意不能超过 camera 返回的宽度高度
+
+  // 默认放开到 800
+  let scaledWidth = props.scaledWidth || 800;
+  let scaledHeight = Math.round((scaledWidth / deviceSize.w) * deviceSize.h);
 
   /** Plugins */
   /** Methods */
 
   let performCodeScan = () => {
-    if (refHasVideo.current && refCanvas.current) {
-      let canvasEl = refCanvas.current;
-      let context = canvasEl.getContext("2d");
-      let imageData = context.getImageData(0, 0, canvasEl.width, canvasEl.height);
-
-      // TODO, 通过 Effects 加载 wasm 模块
-
-      if (window["zxingScanCode"]) {
-        let result: string = window["zxingScanCode"](canvasEl.width, canvasEl.height, new Uint8Array(imageData.data));
-        if (result != null && result.trim() != "") {
-          props.onCodeDetected(result, null);
-        }
-      } else {
-        console.warn("zxing wasm scanner not ready");
-      }
+    if (failedCamera) {
+      return;
     }
+
+    if (!refHasVideo.current || !refCanvas.current) {
+      return;
+    }
+
+    if (window["zxingScanCode"] == null) {
+      return;
+    }
+
+    let scaledCanvas = refCanvas.current;
+    let scaledContext = scaledCanvas.getContext("2d");
+
+    let t0 = performance.now();
+    scaledContext.clearRect(0, 0, scaledWidth, scaledHeight);
+
+    // console.log("drawing", 0, 0, deviceSize.w, deviceSize.h, 0, 0, scaledWidth, scaledHeight);
+    scaledContext.drawImage(refVideo.current, 0, 0, deviceSize.w, deviceSize.h, 0, 0, scaledWidth, scaledHeight);
+
+    let t1 = performance.now();
+    // console.log("time cost for drawing", t1 - t0);
+
+    let scaledImageData = scaledContext.getImageData(0, 0, scaledWidth, scaledHeight);
+    let result: string = window["zxingScanCode"](scaledWidth, scaledHeight, new Uint8Array(scaledImageData.data));
+
+    if (result != null && result.trim() != "") {
+      props.onCodeDetected(result, null);
+      return;
+    }
+
+    let t2 = performance.now();
+    console.log("time cost for scanning", t2 - t1);
   };
 
   /** Effects */
@@ -87,11 +105,13 @@ let ZxingWasmScanner: FC<{
       .getUserMedia({
         video: {
           facingMode: "environment",
+          resizeMode: "none",
         },
         audio: false,
       })
       .then((stream) => {
         refVideo.current.srcObject = stream;
+
         refHasVideo.current = true;
         let cameraSettings = stream.getTracks()[0].getSettings();
 
@@ -107,6 +127,8 @@ let ZxingWasmScanner: FC<{
             h: cameraSettings.width,
           });
         }
+
+        // console.log("set deviceSize", cameraSettings);
       })
       .catch((error) => {
         console.error(`Failed to request camera stream! (${error?.toString()})`);
@@ -119,52 +141,6 @@ let ZxingWasmScanner: FC<{
       });
   }, []);
 
-  useRafLoop(() => {
-    if (failedCamera) {
-      return;
-    }
-
-    if (props.showStaticImage) {
-      // 展示已有的图像, 不再更新
-      return;
-    }
-    if (refHasVideo.current) {
-      let context = refCanvas.current.getContext("2d");
-
-      if (width <= deviceSize.w && height <= deviceSize.h) {
-        context.drawImage(refVideo.current, (width - deviceSize.w) * 0.5, (height - deviceSize.h) * 0.5, deviceSize.w, deviceSize.h);
-      } else if (width / height < deviceSize.w / deviceSize.h) {
-        let scaledDeviceHeight = height;
-        let scaledDeviceWidth = deviceSize.w * (height / deviceSize.h);
-        context.drawImage(refVideo.current, (width - scaledDeviceWidth) * 0.5, 0, scaledDeviceWidth, scaledDeviceHeight);
-      } else {
-        // height > device.h
-        let scaledDeviceWidth = width;
-        let scaledDeviceHeight = deviceSize.h * (width / deviceSize.w);
-        context.drawImage(refVideo.current, 0, (height - scaledDeviceHeight) * 0.5, scaledDeviceWidth, scaledDeviceHeight);
-      }
-
-      // context.drawImage(refVideo.current, 0, 0, refCanvas.current.width, refCanvas.current.height);
-
-      // 用于参考居中配置
-      // context.drawImage(refVideo.current, 0, 0, 200, 200);
-
-      let now = Date.now();
-      let passedMs = now - refLastScanTime.current;
-      let scanInterval = props.scanInterval ?? 600;
-
-      // TODO, hint lines
-      // context.strokeStyle = `hsla(0,80%,100%, ${Math.min(1, passedMs / scanInterval) * 60}%)`;
-      // context.lineWidth = 8;
-      // context.strokeRect(0, 0, width, height);
-
-      if (passedMs > scanInterval) {
-        performCodeScan();
-        refLastScanTime.current = now;
-      }
-    }
-  }, props.renderInterval ?? 100);
-
   useEffect(() => {
     const go = new window["Go"]();
 
@@ -172,7 +148,7 @@ let ZxingWasmScanner: FC<{
       await go.run(inst);
       inst = await WebAssembly.instantiate(mod, go.importObject); // reset instance
 
-      console.log("finished");
+      console.log("Finished loading wasm...");
     }
 
     let mod, inst;
@@ -187,6 +163,10 @@ let ZxingWasmScanner: FC<{
       });
   });
 
+  useRafLoop(() => {
+    performCodeScan();
+  }, 300);
+
   /** Renderers */
 
   let errorLocale = props.errorLocale || "Failed to access to camera(HTTPS and permissions required)";
@@ -195,25 +175,20 @@ let ZxingWasmScanner: FC<{
     return <div className={cx(styleFailed, props.errorClassName)}>{errorLocale}</div>;
   }
 
+  // console.log("size", deviceSize, width, height);
+
   return (
     <>
-      <video ref={refVideo} className={styleVideo} autoPlay />
-      <canvas ref={refCanvas} className={cx(styleContainer, props.className)} width={width} height={height} />
+      <video ref={refVideo} className={styleVideo} autoPlay style={{ width: deviceSize.w, height: deviceSize.h }} />
+      <canvas ref={refCanvas} width={scaledWidth} height={scaledHeight} style={{ width: scaledWidth, height: scaledHeight }} className={styleCanvas} />
     </>
   );
 });
 
 export default ZxingWasmScanner;
 
-let styleContainer = css`
-  background-color: hsl(0, 0%, 0%);
-`;
-
 let styleVideo = css`
-  /* visibility: hidden; */
-  display: none;
-  width: 100px;
-  height: 100px;
+  /* display: none; */
 `;
 
 let styleFailed = css`
@@ -225,4 +200,15 @@ let styleFailed = css`
   max-width: 90vw;
   word-break: break-all;
   line-height: 21px;
+`;
+
+let styleCanvas = css`
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 200;
+  /* opacity: 0.8; */
+  border: 1px solid red;
+  pointer-events: none;
+  display: none;
 `;

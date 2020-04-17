@@ -12,6 +12,8 @@ export let usePopupZxingWasmScanner = (props: {
 
   /** 动态加载 wasm 文件的地址 */
   zxingWasmPath: string;
+  /** 识别之前缩放画布使用的宽度 */
+  scaledWidth?: number;
 }) => {
   // Model
   let [scanning, setScanning] = useState(false);
@@ -41,17 +43,16 @@ export let usePopupZxingWasmScanner = (props: {
   let maxWidth = document.documentElement.clientWidth;
   let maxHeight = document.documentElement.clientHeight;
 
-  let estimatedSize = Math.min(600, Math.min(maxWidth, maxHeight) - 32);
+  let estimatedSize = Math.min(480, Math.min(maxWidth, maxHeight) - 32);
 
   let ui = scanning ? (
     <div className={styleContainer}>
       <div className={styleScanner}>
         <ZxingWasmScanner
-          width={estimatedSize}
-          height={estimatedSize}
           errorLocale={props.errorLocale}
           showStaticImage={tempResult != null}
           zxingWasmPath={props.zxingWasmPath}
+          scaledWidth={props.scaledWidth}
           onCodeDetected={(code, codeType) => {
             setTempResult(code);
 
@@ -118,7 +119,7 @@ let styleClose = css`
 let styleScanner = css`
   margin-left: auto;
   margin-right: auto;
-  margin-top: 20%;
+  margin-top: 10%;
   margin-top: min(80px, 20%);
   margin-bottom: auto;
   position: relative;
