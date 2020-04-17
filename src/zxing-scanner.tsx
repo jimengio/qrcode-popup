@@ -1,12 +1,14 @@
 import React, { FC, useEffect, useRef, useState } from "react";
 import { css, cx } from "emotion";
-import jqQR from "jsqr";
-import Quagga from "@ericblade/quagga2";
 import { useRafLoop } from "./util/use-raf-loop";
-import { MultiFormatReader, BrowserBarcodeReader } from "@zxing/library";
+import { MultiFormatReader, BarcodeFormat, DecodeHintType, HTMLCanvasElementLuminanceSource, HybridBinarizer, BinaryBitmap } from "@zxing/library";
 
-let browserReader = new BrowserBarcodeReader();
-const codeReader = new MultiFormatReader();
+let codeReader = new MultiFormatReader();
+let jsHints = new Map();
+let jsFormats = [BarcodeFormat.CODE_128, BarcodeFormat.QR_CODE, BarcodeFormat.UPC_EAN_EXTENSION];
+jsHints.set(DecodeHintType.POSSIBLE_FORMATS, jsFormats);
+jsHints.set(DecodeHintType.TRY_HARDER, true);
+codeReader.setHints(jsHints);
 
 let ZxingScanner: FC<{
   /** 默认 400 */
@@ -57,11 +59,15 @@ let ZxingScanner: FC<{
 
       img.onload = () => {
         try {
-          let bitmap = browserReader.createBinaryBitmap(img);
+          let luminanceSource = new HTMLCanvasElementLuminanceSource(canvasEl);
+          let hybridBinarizer = new HybridBinarizer(luminanceSource);
+
+          // let bitmap = browserReader.createBinaryBitmap(img);
 
           console.log("scanning...");
 
-          let result = codeReader.decode(bitmap);
+          let bitmap = new BinaryBitmap(hybridBinarizer);
+          let result = codeReader.decode(bitmap, jsHints);
 
           // console.log("result", result);
 
