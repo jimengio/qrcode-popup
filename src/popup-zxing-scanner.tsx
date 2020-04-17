@@ -44,8 +44,6 @@ export let usePopupZxingScanner = (props: {
     <div className={styleContainer}>
       <div className={styleScanner}>
         <ZxingScanner
-          width={estimatedSize}
-          height={estimatedSize}
           errorLocale={props.errorLocale}
           showStaticImage={tempResult != null}
           onCodeDetected={(code, codeType) => {
@@ -114,7 +112,7 @@ let styleClose = css`
 let styleScanner = css`
   margin-left: auto;
   margin-right: auto;
-  margin-top: 20%;
+  margin-top: 10%;
   margin-top: min(80px, 20%);
   margin-bottom: auto;
   position: relative;

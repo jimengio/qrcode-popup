@@ -16,8 +16,6 @@ let DemoZxingScanner: FC<{}> = React.memo((props) => {
     <div className={styleContainer}>
       <DocDemo title="Mixed Quagga2 and jsqr">
         <ZxingScanner
-          width={300}
-          height={300}
           onCodeDetected={(detected, codeKind) => {
             console.log("got code", JSON.stringify(detected));
             setCode(detected);
