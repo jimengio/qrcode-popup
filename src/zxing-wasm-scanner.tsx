@@ -4,9 +4,6 @@ import jqQR from "jsqr";
 import Quagga from "@ericblade/quagga2";
 import { useRafLoop } from "./util/use-raf-loop";
 
-// 提供 Go runtime 相关代码
-import "./zxing-wasm-scanner/go-wasm-exec";
-
 if (!WebAssembly.instantiateStreaming) {
   // polyfill
   WebAssembly.instantiateStreaming = async (resp, importObject) => {
