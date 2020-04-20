@@ -75,6 +75,12 @@ export let genRouter = {
     path: () => `/zxing-wasm-scanner-popup`,
     go: () => switchPath(`/zxing-wasm-scanner-popup`),
   },
+  scannerEvents: {
+    name: "scanner-events",
+    raw: "scanner-events",
+    path: () => `/scanner-events`,
+    go: () => switchPath(`/scanner-events`),
+  },
   $: {
     name: "home",
     raw: "",
@@ -94,6 +100,7 @@ export type GenRouterTypeMain =
   | GenRouterTypeTree["fileMixedScanner"]
   | GenRouterTypeTree["zxingWasmScanner"]
   | GenRouterTypeTree["zxingWasmScannerPopup"]
+  | GenRouterTypeTree["scannerEvents"]
   | GenRouterTypeTree["$"];
 
 export interface GenRouterTypeTree {
@@ -153,6 +160,12 @@ export interface GenRouterTypeTree {
   };
   zxingWasmScannerPopup: {
     name: "zxing-wasm-scanner-popup";
+    params: {};
+    query: {};
+    next: null;
+  };
+  scannerEvents: {
+    name: "scanner-events";
     params: {};
     query: {};
     next: null;
