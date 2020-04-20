@@ -9,6 +9,7 @@ export let usePopupZxingScanner = (props: {
   /** 预览扫码结果时长 */
   previewTime?: number;
   onCodeDetected?: FuncDetectedCode;
+  onScanFinish?: (info: { drawCost: number; scanCost: number; totalCost: number }) => void;
 }) => {
   // Model
   let [scanning, setScanning] = useState(false);
@@ -46,6 +47,7 @@ export let usePopupZxingScanner = (props: {
         <ZxingScanner
           errorLocale={props.errorLocale}
           showStaticImage={tempResult != null}
+          onScanFinish={props.onScanFinish}
           onCodeDetected={(code, codeType) => {
             setTempResult(code);
 

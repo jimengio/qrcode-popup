@@ -13,10 +13,10 @@ export let useRafLoop = (callback: () => void, delay: number) => {
   });
 
   let loopCalling = () => {
-    let initialTime = performance.now();
+    // let initialTime = performance.now();
     requestAnimationFrame(() => {
       refTimeout.current = window.setTimeout(() => {
-        let callingTime = performance.now();
+        // let callingTime = performance.now();
         // console.log("loop wait time", callingTime - initialTime);
         savedCallback.current();
 

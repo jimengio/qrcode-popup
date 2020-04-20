@@ -28,6 +28,8 @@ let ZxingScanner: FC<{
 
   /** 暂时关闭渲染 */
   showStaticImage?: boolean;
+
+  onScanFinish?: (info: { drawCost: number; scanCost: number; totalCost: number }) => void;
 }> = React.memo((props) => {
   let refVideo = useRef<HTMLVideoElement>();
   let refCanvas = useRef<HTMLCanvasElement>();
@@ -82,10 +84,14 @@ let ZxingScanner: FC<{
 
     // console.log("compare", grabbedBitmap, bitmap);
 
+    let t2: number;
+
     try {
       /** CONFUSION: faster to pass hybridBinarizer directly */
       // let bitmap = new BinaryBitmap(hybridBinarizer);
       let result = codeReader.decode(hybridBinarizer as any, jsHints);
+
+      t2 = performance.now();
 
       if (result != null && result.getText() != "") {
         props.onCodeDetected(result.getText(), null);
@@ -93,9 +99,17 @@ let ZxingScanner: FC<{
       }
     } catch (error) {
       console.log("failed to decode");
+      t2 = performance.now();
     }
 
-    let t2 = performance.now();
+    if (props.onScanFinish) {
+      props.onScanFinish({
+        drawCost: t1 - t0,
+        scanCost: t2 - t1,
+        totalCost: t2 - t0,
+      });
+    }
+
     console.log("time cost for scanning", t2 - t1);
   };
 
