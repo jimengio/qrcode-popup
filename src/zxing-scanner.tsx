@@ -68,9 +68,9 @@ let ZxingScanner: FC<{
     let t0 = performance.now();
     scaledContext.clearRect(0, 0, scaledWidth, scaledHeight);
 
-    // let grabbedBitmap = await refImageCapture.current.grabFrame();
+    let grabbedBitmap = await refImageCapture.current.grabFrame();
     // console.log("drawing", 0, 0, deviceSize.w, deviceSize.h, 0, 0, scaledWidth, scaledHeight);
-    scaledContext.drawImage(refVideo.current, 0, 0, deviceSize.w, deviceSize.h, 0, 0, scaledWidth, scaledHeight);
+    scaledContext.drawImage(grabbedBitmap, 0, 0, deviceSize.w, deviceSize.h, 0, 0, scaledWidth, scaledHeight);
 
     // console.log(scaledWidth, scaledHeight, deviceSize, jsHints);
 
