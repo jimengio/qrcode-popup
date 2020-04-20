@@ -8,6 +8,8 @@ let DemoZxingScanner: FC<{}> = React.memo((props) => {
   let [code, setCode] = useState("");
   let [kind, setKind] = useState(null);
 
+  let [totalCost, setTotalCost] = useState(0);
+
   /** Plugins */
   /** Methods */
   /** Effects */
@@ -21,7 +23,11 @@ let DemoZxingScanner: FC<{}> = React.memo((props) => {
             setCode(detected);
             setKind(codeKind);
           }}
+          onScanFinish={(info) => {
+            setTotalCost(info.totalCost);
+          }}
         />
+        <div>Time cost: {totalCost} </div>
         <div>
           Scan result: {code} - {kind}
         </div>
