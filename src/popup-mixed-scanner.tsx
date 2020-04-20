@@ -9,6 +9,8 @@ export let usePopupMixedScanner = (props: {
   /** 预览扫码结果时长 */
   previewTime?: number;
   onCodeDetected?: FuncDetectedCode;
+
+  onScanFinish?: (info: { scanCost: number }) => void;
 }) => {
   // Model
   let [scanning, setScanning] = useState(false);
@@ -48,6 +50,7 @@ export let usePopupMixedScanner = (props: {
           height={estimatedSize}
           errorLocale={props.errorLocale}
           showStaticImage={tempResult != null}
+          onScanFinish={props.onScanFinish}
           onCodeDetected={(code, codeType) => {
             setTempResult(code);
 

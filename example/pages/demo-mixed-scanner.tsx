@@ -8,6 +8,8 @@ let DemoMixedScanner: FC<{}> = React.memo((props) => {
   let [code, setCode] = useState("");
   let [kind, setKind] = useState(null);
 
+  let [scanCost, setScanCost] = useState(0);
+
   /** Plugins */
   /** Methods */
   /** Effects */
@@ -18,12 +20,16 @@ let DemoMixedScanner: FC<{}> = React.memo((props) => {
         <MixedScanner
           width={300}
           height={300}
+          onScanFinish={(info) => {
+            setScanCost(info.scanCost);
+          }}
           onCodeDetected={(detected, codeKind) => {
             console.log("got code", JSON.stringify(detected));
             setCode(detected);
             setKind(codeKind);
           }}
         />
+        <div>Cost: {scanCost || "-"}</div>
         <div>
           Scan result: {code} - {kind}
         </div>

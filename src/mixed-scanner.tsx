@@ -23,6 +23,8 @@ let MixedScanner: FC<{
 
   /** 暂时关闭渲染 */
   showStaticImage?: boolean;
+
+  onScanFinish?: (info: { scanCost: number }) => void;
 }> = React.memo((props) => {
   let refVideo = useRef<HTMLVideoElement>();
   let refCanvas = useRef<HTMLCanvasElement>();
@@ -51,8 +53,14 @@ let MixedScanner: FC<{
 
       // console.log(imageData);
 
+      let t0 = performance.now();
+
       let detectQrCode = jqQR(imageData.data, canvasEl.width, canvasEl.height);
       if (detectQrCode != null) {
+        let t1 = performance.now();
+        if (props.onScanFinish != null) {
+          props.onScanFinish({ scanCost: t1 - t0 });
+        }
         props.onCodeDetected(detectQrCode.data.trim(), "qrcode");
         return;
       }
@@ -69,6 +77,10 @@ let MixedScanner: FC<{
           },
         },
         (result) => {
+          let t1 = performance.now();
+          if (props.onScanFinish != null) {
+            props.onScanFinish({ scanCost: t1 - t0 });
+          }
           if (result?.codeResult != null) {
             props.onCodeDetected(result.codeResult.code.trim(), "barcode");
           }

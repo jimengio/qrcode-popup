@@ -5,6 +5,7 @@ import { usePopupMixedScanner } from "../../src/popup-mixed-scanner";
 
 let DemoMixedScannerPopup: FC<{}> = React.memo((props) => {
   let [result, setResult] = useState("");
+  let [scanCost, setScanCost] = useState(0);
 
   /** Plugins */
 
@@ -12,6 +13,9 @@ let DemoMixedScannerPopup: FC<{}> = React.memo((props) => {
     errorLocale: "扫码错误: 无法获取相机图像 无法获取相机图像(可能是因为没有 HTTPS 权限)",
     onCodeDetected: (code, codeType) => {
       console.log(code, codeType);
+    },
+    onScanFinish: (info) => {
+      setScanCost(info.scanCost);
     },
   });
 
@@ -31,6 +35,7 @@ let DemoMixedScannerPopup: FC<{}> = React.memo((props) => {
         >
           Scan
         </button>
+        <div>Cost: {scanCost || "-"}</div>
         <div>Result: {result || "-"}</div>
 
         <DocSnippet code={exampleCode} />
