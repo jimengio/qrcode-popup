@@ -13,13 +13,16 @@ export let useRafLoop = (callback: () => void, delay: number) => {
   });
 
   let loopCalling = () => {
-    refTimeout.current = window.setTimeout(() => {
-      savedCallback.current();
+    let initialTime = performance.now();
+    requestAnimationFrame(() => {
+      refTimeout.current = window.setTimeout(() => {
+        let callingTime = performance.now();
+        // console.log("loop wait time", callingTime - initialTime);
+        savedCallback.current();
 
-      requestAnimationFrame(() => {
         loopCalling();
-      });
-    }, delay);
+      }, delay);
+    });
   };
 
   // Set up the interval.

@@ -12,7 +12,7 @@ function qsStringify(queries: { [k: string]: any }) {
 
 // generated
 
-// Generated with router-code-generator@0.2.5
+// Generated with router-code-generator@0.2.6
 
 export let genRouter = {
   qrCode: {
@@ -45,6 +45,36 @@ export let genRouter = {
     path: () => `/mixed-scanner-popup`,
     go: () => switchPath(`/mixed-scanner-popup`),
   },
+  zxingScanner: {
+    name: "zxing-scanner",
+    raw: "zxing-scanner",
+    path: () => `/zxing-scanner`,
+    go: () => switchPath(`/zxing-scanner`),
+  },
+  zxingScannerPopup: {
+    name: "zxing-scanner-popup",
+    raw: "zxing-scanner-popup",
+    path: () => `/zxing-scanner-popup`,
+    go: () => switchPath(`/zxing-scanner-popup`),
+  },
+  fileMixedScanner: {
+    name: "file-mixed-scanner",
+    raw: "file-mixed-scanner",
+    path: () => `/file-mixed-scanner`,
+    go: () => switchPath(`/file-mixed-scanner`),
+  },
+  zxingWasmScanner: {
+    name: "zxing-wasm-scanner",
+    raw: "zxing-wasm-scanner",
+    path: () => `/zxing-wasm-scanner`,
+    go: () => switchPath(`/zxing-wasm-scanner`),
+  },
+  zxingWasmScannerPopup: {
+    name: "zxing-wasm-scanner-popup",
+    raw: "zxing-wasm-scanner-popup",
+    path: () => `/zxing-wasm-scanner-popup`,
+    go: () => switchPath(`/zxing-wasm-scanner-popup`),
+  },
   $: {
     name: "home",
     raw: "",
@@ -59,6 +89,11 @@ export type GenRouterTypeMain =
   | GenRouterTypeTree["zbarScanner"]
   | GenRouterTypeTree["mixedScanner"]
   | GenRouterTypeTree["mixedScannerPopup"]
+  | GenRouterTypeTree["zxingScanner"]
+  | GenRouterTypeTree["zxingScannerPopup"]
+  | GenRouterTypeTree["fileMixedScanner"]
+  | GenRouterTypeTree["zxingWasmScanner"]
+  | GenRouterTypeTree["zxingWasmScannerPopup"]
   | GenRouterTypeTree["$"];
 
 export interface GenRouterTypeTree {
@@ -88,6 +123,36 @@ export interface GenRouterTypeTree {
   };
   mixedScannerPopup: {
     name: "mixed-scanner-popup";
+    params: {};
+    query: {};
+    next: null;
+  };
+  zxingScanner: {
+    name: "zxing-scanner";
+    params: {};
+    query: {};
+    next: null;
+  };
+  zxingScannerPopup: {
+    name: "zxing-scanner-popup";
+    params: {};
+    query: {};
+    next: null;
+  };
+  fileMixedScanner: {
+    name: "file-mixed-scanner";
+    params: {};
+    query: {};
+    next: null;
+  };
+  zxingWasmScanner: {
+    name: "zxing-wasm-scanner";
+    params: {};
+    query: {};
+    next: null;
+  };
+  zxingWasmScannerPopup: {
+    name: "zxing-wasm-scanner-popup";
     params: {};
     query: {};
     next: null;

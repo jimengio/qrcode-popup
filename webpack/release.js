@@ -10,7 +10,7 @@ let MiniCssExtractPlugin = require("mini-css-extract-plugin");
 let CopyWebpackPlugin = require("copy-webpack-plugin");
 let ProgressPlugin = require("@jimengio/ci-progress-webpack-plugin");
 
-let { matchExtractCssRule, matchFontsRule, matchTsReleaseRule, matchWasmRule } = require("./shared");
+let { matchExtractCssRule, matchFontsRule, matchTsReleaseRule } = require("./shared");
 let splitChunks = require("./split-chunks");
 let dllManifest = require("./dll/manifest-release.json");
 
@@ -33,7 +33,7 @@ module.exports = {
     splitChunks: splitChunks,
   },
   module: {
-    rules: [matchExtractCssRule, matchFontsRule, matchTsReleaseRule, matchWasmRule],
+    rules: [matchExtractCssRule, matchFontsRule, matchTsReleaseRule],
   },
   resolve: {
     extensions: [".tsx", ".ts", ".js"],
@@ -54,6 +54,9 @@ module.exports = {
     warnings: true,
   },
   plugins: [
+    new webpack.DefinePlugin({
+      GlobalZxingWasmPath: JSON.stringify("wasm/zxing-go.wasm"),
+    }),
     new ForkTsCheckerWebpackPlugin({ checkSyntacticErrors: true, async: false }),
     new MiniCssExtractPlugin({
       filename: "[name].[hash:8].css",
@@ -73,6 +76,7 @@ module.exports = {
       trackingCode,
     }),
     new CopyWebpackPlugin([{ from: "node_modules/zbar.wasm/data/zbar.wasm", to: "wasm/" }], {}),
+    new CopyWebpackPlugin([{ from: "src/assets/zxing-go.wasm", to: "wasm/" }], {}),
     new HtmlWebpackTagsPlugin({
       tags: [`${dllManifest.name}.js`],
       append: false,

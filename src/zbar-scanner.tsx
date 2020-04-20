@@ -70,7 +70,7 @@ let ZbarScanner: FC<{
   useEffect(() => {
     (async () => {
       // let scanner = await Scanner({
-      //   locateFile: (file) => "/wasm/zbar.wasm",
+      //   locateFile: (file) => "wasm/zbar.wasm",
       // });
       // refScanner.current = scanner;
     })();
