@@ -15,6 +15,7 @@ import DemoZxingScannerPopup from "./demo-zxing-scanner-popup";
 import DemoFileMixedScanner from "./demo-file-mixed-scanner";
 import DemoZxingWasmScanner from "./demo-zxing-wasm-scanner";
 import DemoZxingWasmScannerPopup from "./demo-zxing-wasm-scanner-popup";
+import DemoScannerEvents from "./demo-scanner-events";
 
 let items: ISidebarEntry[] = [
   {
@@ -50,8 +51,12 @@ let items: ISidebarEntry[] = [
     path: genRouter.zxingWasmScanner.name,
   },
   {
-    title: "Zxing Wasm Scanner Popuop",
+    title: "Zxing Wasm Scanner Popup",
     path: genRouter.zxingWasmScannerPopup.name,
+  },
+  {
+    title: "Scanner Events",
+    path: genRouter.scannerEvents.name,
   },
 ];
 
@@ -77,6 +82,8 @@ const renderChildPage = (routerTree: GenRouterTypeMain) => {
       return <DemoZxingWasmScanner />;
     case "zxing-wasm-scanner-popup":
       return <DemoZxingWasmScannerPopup />;
+    case "scanner-events":
+      return <DemoScannerEvents />;
     default:
       return <HashRedirect to={genRouter.qrCode.path()} noDelay></HashRedirect>;
   }
