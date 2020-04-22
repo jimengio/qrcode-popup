@@ -89,11 +89,11 @@ export let usePopupMixedScanner = (props: {
     callbackRef.current = callback;
   };
 
-  let onClose = () => {
+  let close = () => {
     setScanning(false);
   };
 
-  return { ui, popup, onClose };
+  return { ui, popup, close };
 };
 
 let styleContainer = css`
