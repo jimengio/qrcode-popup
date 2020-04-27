@@ -16,7 +16,7 @@ export let useScannerEvents = (props: { onRevicedCode: (code: string) => void })
         refCode.current = "";
       }
 
-      if (event.key === "Enter") {
+      if (event.key === "Enter" || event.key === "Tab") {
         props.onRevicedCode(refCode.current);
         refCode.current = "";
       } else if (event.key.length === 1) {
@@ -32,9 +32,19 @@ export let useScannerEvents = (props: { onRevicedCode: (code: string) => void })
       refLastCodeTime.current = now;
     };
 
+    // 目前已知的扫描枪事件有的型号以 Enter 结尾, 有的以 Tab 结尾, 对 Tab 做一些特殊处理
+    let onKeydown = (event: KeyboardEvent) => {
+      if (event.key === "Tab") {
+        listener(event);
+        event.preventDefault(); // prevent from blur
+      }
+    };
+
+    window.addEventListener("keydown", onKeydown);
     window.addEventListener("keypress", listener);
 
     return () => {
+      window.removeEventListener("keydown", onKeydown);
       window.removeEventListener("keypress", listener);
     };
   }, []);
