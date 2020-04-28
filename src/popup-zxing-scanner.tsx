@@ -1,25 +1,53 @@
-import React, { useState, ReactNode, useRef, useEffect } from "react";
-import { css } from "emotion";
-import ZxingScanner from "./zxing-scanner";
+import React, { useState, ReactNode, useRef, useEffect, useCallback } from "react";
+import { css, cx } from "emotion";
+import { useZxingScanner, ZxingScannerOptions } from "./use-zxing-scanner";
 
-type FuncDetectedCode = (code: string, codeType: "qrcode" | "barcode") => void;
+import LoadingIndicator from "./loading-indicator";
+
+const DefaultErrorLocale = "Failed to access to camera(HTTPS and permissions required)";
 
 export let usePopupZxingScanner = (props: {
   errorLocale?: string;
+  errorClassName?: string;
+
   /** 预览扫码结果时长 */
   previewTime?: number;
-  onCodeDetected?: FuncDetectedCode;
-  onScanFinish?: (info: { drawCost: number; scanCost: number; totalCost: number }) => void;
+  onCodeDetected?: ZxingScannerOptions["onCodeDetected"];
+  onScanFinish?: ZxingScannerOptions["onScanFinish"];
+  onError?: ZxingScannerOptions["onError"];
 }) => {
+  const { errorLocale, errorClassName, previewTime = 800, onCodeDetected, onScanFinish, onError } = props;
+  const timerRef = useRef<ReturnType<typeof setTimeout>>();
+
   // Model
-  let [scanning, setScanning] = useState(false);
-  let [tempResult, setTempResult] = useState(null);
+  const [scanning, setScanning] = useState(false);
+  const [tempResult, setTempResult] = useState(null);
 
-  let callbackRef = useRef(undefined as FuncDetectedCode);
+  const callbackRef = useRef<ZxingScannerOptions["onCodeDetected"]>();
 
-  // Plugins
+  const onCodeDetectedEvent = (code) => {
+    setTempResult(code);
 
-  // Effects
+    loopCancel();
+
+    timerRef.current = setTimeout(() => {
+      if (callbackRef.current != null) {
+        callbackRef.current(code);
+        callbackRef.current = null;
+      }
+
+      onCodeDetected && onCodeDetected(code);
+
+      setScanning(false);
+      onClose();
+    }, previewTime);
+  };
+
+  const { loading, error, cameraHolder, onScan, onClose, loopCancel } = useZxingScanner({
+    onScanFinish,
+    onError,
+    onCodeDetected: onCodeDetectedEvent,
+  });
 
   useEffect(() => {
     let listener = (event: KeyboardEvent) => {
@@ -31,46 +59,27 @@ export let usePopupZxingScanner = (props: {
 
     return () => {
       window.removeEventListener("keydown", listener);
+
+      if (timerRef.current) {
+        clearTimeout(timerRef.current);
+      }
+      timerRef.current = undefined;
     };
   }, []);
 
-  // View
-
-  let maxWidth = document.documentElement.clientWidth;
-  let maxHeight = document.documentElement.clientHeight;
-
-  let estimatedSize = Math.min(480, Math.min(maxWidth, maxHeight) - 32);
-
-  let ui = scanning ? (
+  const ui = scanning ? (
     <div className={styleContainer}>
+      {loading && <LoadingIndicator className={styleLoading} />}
       <div className={styleScanner}>
-        <ZxingScanner
-          errorLocale={props.errorLocale}
-          showStaticImage={tempResult != null}
-          onScanFinish={props.onScanFinish}
-          onCodeDetected={(code, codeType) => {
-            setTempResult(code);
-
-            setTimeout(() => {
-              if (callbackRef.current != null) {
-                callbackRef.current(code, codeType);
-                callbackRef.current = null;
-              }
-
-              if (props.onCodeDetected != null) {
-                props.onCodeDetected(code, codeType);
-              }
-
-              setScanning(false);
-            }, props.previewTime || 800);
-          }}
-        />
+        {error && <div className={cx(styleFailed, errorClassName)}>{errorLocale || DefaultErrorLocale}</div>}
+        {cameraHolder}
         {tempResult != null ? <div className={styleTempResult}>{tempResult}</div> : null}
       </div>
 
       <div
         className={styleClose}
         onClick={() => {
+          onClose();
           setScanning(false);
         }}
       >
@@ -80,15 +89,17 @@ export let usePopupZxingScanner = (props: {
   ) : null;
 
   // Controller
-  let popup = (callback?: FuncDetectedCode) => {
+  const popup = useCallback((callback?: ZxingScannerOptions["onCodeDetected"]) => {
     setTempResult(null);
     setScanning(true);
+    onScan();
     callbackRef.current = callback;
-  };
+  }, []);
 
-  let close = () => {
+  const close = useCallback(() => {
     setScanning(false);
-  };
+    onClose();
+  }, []);
 
   return { ui, popup, close };
 };
@@ -135,4 +146,23 @@ let styleTempResult = css`
   font-family: Source Code Pro, Menlo, Roboto Mono, Consolas, monospace;
   color: white;
   background-color: hsl(0, 0%, 0%, 0.4);
+`;
+
+const styleFailed = css`
+  background-color: #f5222d;
+  color: white;
+  padding: 12px 16px;
+  font-size: 14px;
+  margin: 10vw auto auto auto;
+  max-width: 90vw;
+  word-break: break-all;
+  line-height: 21px;
+`;
+
+const styleLoading = css`
+  position: fixed;
+  top: 40%;
+  left: 0;
+  right: 0;
+  margin: auto;
 `;
