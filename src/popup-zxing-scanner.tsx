@@ -1,4 +1,4 @@
-import React, { useState, ReactNode, useRef, useEffect, useCallback } from "react";
+import React, { useState, ReactNode, useRef, useEffect, useCallback, CSSProperties } from "react";
 import { css, cx } from "emotion";
 import { useZxingScanner, ZxingScannerOptions } from "./use-zxing-scanner";
 
@@ -9,6 +9,10 @@ const DefaultErrorLocale = "Failed to access to camera(HTTPS and permissions req
 export let usePopupZxingScanner = (props: {
   errorLocale?: string;
   errorClassName?: string;
+  hideError?: boolean;
+
+  loadNode?: ReactNode;
+  loadClassName?: string;
 
   /** 预览扫码结果时长 */
   previewTime?: number;
@@ -16,7 +20,7 @@ export let usePopupZxingScanner = (props: {
   onScanFinish?: ZxingScannerOptions["onScanFinish"];
   onError?: ZxingScannerOptions["onError"];
 }) => {
-  const { errorLocale, errorClassName, previewTime = 800, onCodeDetected, onScanFinish, onError } = props;
+  const { errorLocale, errorClassName, hideError, loadNode, loadClassName, previewTime = 800, onCodeDetected, onScanFinish, onError } = props;
   const timerRef = useRef<ReturnType<typeof setTimeout>>();
 
   // Model
@@ -69,9 +73,9 @@ export let usePopupZxingScanner = (props: {
 
   const ui = scanning ? (
     <div className={styleContainer}>
-      {loading && <LoadingIndicator className={styleLoading} />}
+      {loading && (loadNode || <LoadingIndicator className={cx(styleLoading, loadClassName)} />)}
       <div className={styleScanner}>
-        {error && <div className={cx(styleFailed, errorClassName)}>{errorLocale || DefaultErrorLocale}</div>}
+        {!hideError && error && <div className={cx(styleFailed, errorClassName)}>{errorLocale || DefaultErrorLocale}</div>}
         {cameraHolder}
         {tempResult != null ? <div className={styleTempResult}>{tempResult}</div> : null}
       </div>
