@@ -11,8 +11,8 @@ let DemoMixedScannerPopup: FC<{}> = React.memo((props) => {
 
   let popupScanner = usePopupZxingScanner({
     errorLocale: "扫码错误: 无法获取相机图像 无法获取相机图像(可能是因为没有 HTTPS 权限)",
-    onCodeDetected: (code, codeType) => {
-      console.log(code, codeType);
+    onCodeDetected: (code) => {
+      console.log(code);
     },
     onScanFinish: (info) => {
       setTotalCost(info.totalCost);
@@ -27,7 +27,7 @@ let DemoMixedScannerPopup: FC<{}> = React.memo((props) => {
       <DocDemo title={"Mixed Scanner Popup"}>
         <button
           onClick={() => {
-            popupScanner.popup((code, codeType) => {
+            popupScanner.popup((code) => {
               console.log("got code", JSON.stringify(code));
               setResult(code);
             });
