@@ -1,18 +1,22 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useCallback } from "react";
 
 const noop = () => {};
 
 /** add Raf for performance reasons, mainly the structure of use-interval */
-export let useRafLoop = (callback: () => void, delay: number) => {
+export const useRafLoop = (callback: () => void, delay: number, autoLoop = true): { loopCancel: () => void; loopCalling: () => void } => {
   const savedCallback = useRef(noop);
-  let refTimeout = useRef<number>();
+  const refTimeout = useRef<number>();
+
+  const loopCancel = useCallback(() => {
+    clearTimeout(refTimeout.current);
+  }, []);
 
   // Remember the latest callback.
   useEffect(() => {
     savedCallback.current = callback;
   });
 
-  let loopCalling = () => {
+  const loopCalling = useCallback(() => {
     // let initialTime = performance.now();
     requestAnimationFrame(() => {
       refTimeout.current = window.setTimeout(() => {
@@ -23,12 +27,14 @@ export let useRafLoop = (callback: () => void, delay: number) => {
         loopCalling();
       }, delay);
     });
-  };
+  }, [delay]);
 
   // Set up the interval.
   useEffect(() => {
-    loopCalling();
+    autoLoop && loopCalling();
+  }, [loopCalling]);
 
-    return () => clearTimeout(refTimeout.current);
-  }, [delay]);
+  useEffect(() => loopCancel, [loopCancel]);
+
+  return { loopCancel, loopCalling };
 };
