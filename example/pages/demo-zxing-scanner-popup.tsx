@@ -49,15 +49,15 @@ let DemoMixedScannerPopup: FC<{}> = React.memo((props) => {
 export default DemoMixedScannerPopup;
 
 let exampleCode = `
-let popupScanner = usePopupMixedScanner({
-  onCodeDetected: (code, codeType) => {
-    console.log(code, codeType);
+let popupScanner = usePopupZxingScanner({
+  onCodeDetected: (code) => {
+    console.log(code);
   },
 });
 
 popupScanner.ui // UI Part
 
-popupScanner.popup((code, codeType) => {
+popupScanner.popup((code) => {
   console.log("got code", code, codeType);
 });
 `;
