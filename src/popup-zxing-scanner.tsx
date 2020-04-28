@@ -1,6 +1,6 @@
 import React, { useState, ReactNode, useRef, useEffect, useCallback, CSSProperties } from "react";
 import { css, cx } from "emotion";
-import { useZxingScanner, ZxingScannerOptions } from "./use-zxing-scanner";
+import { useStatefulZxingScanner, ZxingScannerOptions } from "./use-stateful-zxing-scanner";
 
 import LoadingIndicator from "./loading-indicator";
 
@@ -32,7 +32,7 @@ export let usePopupZxingScanner = (props: {
   const onCodeDetectedEvent = (code) => {
     setTempResult(code);
 
-    loopCancel();
+    cancelLoop();
 
     timerRef.current = setTimeout(() => {
       if (callbackRef.current != null) {
@@ -47,7 +47,7 @@ export let usePopupZxingScanner = (props: {
     }, previewTime);
   };
 
-  const { loading, error, cameraHolder, onScan, onClose, loopCancel } = useZxingScanner({
+  const { loading, error, cameraHolder, onScan, onClose, cancelLoop } = useStatefulZxingScanner({
     onScanFinish,
     onError,
     onCodeDetected: onCodeDetectedEvent,

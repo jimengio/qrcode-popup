@@ -11,7 +11,7 @@ import DemoZbarScanner from "./demo-zbar-scanner";
 import DemoMixedScanner from "./demo-mixed-scanner";
 import DemoMixedScannerPopup from "./demo-mixed-scanner-popup";
 import DemoZxingScanner from "./demo-zxing-scanner";
-import DemoUseZxingScanner from "./demo-use-zxing-scanner";
+import DemoUseStatefulZxingScanner from "./demo-use-zxing-scanner";
 import DemoZxingScannerPopup from "./demo-zxing-scanner-popup";
 import DemoFileMixedScanner from "./demo-file-mixed-scanner";
 import DemoZxingWasmScanner from "./demo-zxing-wasm-scanner";
@@ -40,8 +40,8 @@ let items: ISidebarEntry[] = [
     path: genRouter.zxingScanner.name,
   },
   {
-    title: "useZxingScanner",
-    path: genRouter.useZxingScanner.name,
+    title: "useStatefulZxingScanner",
+    path: genRouter.useStatefulZxingScanner.name,
   },
 
   {
@@ -80,8 +80,8 @@ const renderChildPage = (routerTree: GenRouterTypeMain) => {
       return <DemoMixedScannerPopup />;
     case "zxing-scanner":
       return <DemoZxingScanner />;
-    case "use-zxing-scanner":
-      return <DemoUseZxingScanner />;
+    case "use-stateful-zxing-scanner":
+      return <DemoUseStatefulZxingScanner />;
     case "zxing-scanner-popup":
       return <DemoZxingScannerPopup />;
     case "file-mixed-scanner":

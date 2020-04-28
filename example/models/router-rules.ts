@@ -7,7 +7,7 @@ export const routerRules: IRouteRule[] = [
   { path: "mixed-scanner" },
   { path: "mixed-scanner-popup" },
   { path: "zxing-scanner" },
-  { path: "use-zxing-scanner" },
+  { path: "use-stateful-zxing-scanner" },
   { path: "zxing-scanner-popup" },
   { path: "file-mixed-scanner" },
   { path: "zxing-wasm-scanner" },

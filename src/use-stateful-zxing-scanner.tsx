@@ -30,7 +30,7 @@ export type ZxingScannerReturnResult = {
   cameraHolder: React.ReactElement;
   onScan: () => void;
   onClose: () => void;
-  loopCancel: () => void;
+  cancelLoop: () => void;
   loopCalling: () => void;
 };
 
@@ -39,7 +39,7 @@ const defaultState: ZxingScannerState = {
   height: 200,
 };
 
-export function useZxingScanner(options: ZxingScannerOptions): ZxingScannerReturnResult {
+export function useStatefulZxingScanner(options: ZxingScannerOptions): ZxingScannerReturnResult {
   const { className, style, initState, onCodeDetected, onScanFinish, onError } = options;
   const refVideo = useRef<HTMLVideoElement>();
   const refCanvas = useRef<HTMLCanvasElement>();
@@ -92,7 +92,7 @@ export function useZxingScanner(options: ZxingScannerOptions): ZxingScannerRetur
     }
   };
 
-  const { loopCancel, loopCalling } = useRafLoop(
+  const { cancelLoop, loopCalling } = useRafLoop(
     () => {
       performCodeScan();
     },
@@ -143,7 +143,7 @@ export function useZxingScanner(options: ZxingScannerOptions): ZxingScannerRetur
             throw error;
           }
 
-          loopCancel();
+          cancelLoop();
         });
     } else {
       setFailedCamera(true);
@@ -152,7 +152,7 @@ export function useZxingScanner(options: ZxingScannerOptions): ZxingScannerRetur
   }, []);
 
   const onClose = useCallback(() => {
-    loopCancel();
+    cancelLoop();
     streamRef.current?.getTracks()?.[0]?.stop();
     codeReader?.reset();
     if (refVideo.current) {
@@ -170,6 +170,7 @@ export function useZxingScanner(options: ZxingScannerOptions): ZxingScannerRetur
     setVideoLoading(false);
   }, []);
 
+  // unmount
   useEffect(() => onClose, [onClose]);
 
   const cameraHolder = (
@@ -186,5 +187,5 @@ export function useZxingScanner(options: ZxingScannerOptions): ZxingScannerRetur
     </>
   );
 
-  return { loading: videoLoading, error: failedCamera, cameraHolder, onScan, onClose, loopCancel, loopCalling };
+  return { loading: videoLoading, error: failedCamera, cameraHolder, onScan, onClose, cancelLoop, loopCalling };
 }

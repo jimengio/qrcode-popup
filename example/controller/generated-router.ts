@@ -51,11 +51,11 @@ export let genRouter = {
     path: () => `/zxing-scanner`,
     go: () => switchPath(`/zxing-scanner`),
   },
-  useZxingScanner: {
-    name: "use-zxing-scanner",
-    raw: "use-zxing-scanner",
-    path: () => `/use-zxing-scanner`,
-    go: () => switchPath(`/use-zxing-scanner`),
+  useStatefulZxingScanner: {
+    name: "use-stateful-zxing-scanner",
+    raw: "use-stateful-zxing-scanner",
+    path: () => `/use-stateful-zxing-scanner`,
+    go: () => switchPath(`/use-stateful-zxing-scanner`),
   },
   zxingScannerPopup: {
     name: "zxing-scanner-popup",
@@ -102,7 +102,7 @@ export type GenRouterTypeMain =
   | GenRouterTypeTree["mixedScanner"]
   | GenRouterTypeTree["mixedScannerPopup"]
   | GenRouterTypeTree["zxingScanner"]
-  | GenRouterTypeTree["useZxingScanner"]
+  | GenRouterTypeTree["useStatefulZxingScanner"]
   | GenRouterTypeTree["zxingScannerPopup"]
   | GenRouterTypeTree["fileMixedScanner"]
   | GenRouterTypeTree["zxingWasmScanner"]
@@ -147,8 +147,8 @@ export interface GenRouterTypeTree {
     query: {};
     next: null;
   };
-  useZxingScanner: {
-    name: "use-zxing-scanner";
+  useStatefulZxingScanner: {
+    name: "use-stateful-zxing-scanner";
     params: {};
     query: {};
     next: null;

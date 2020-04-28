@@ -3,11 +3,11 @@ import { useEffect, useRef, useCallback } from "react";
 const noop = () => {};
 
 /** add Raf for performance reasons, mainly the structure of use-interval */
-export const useRafLoop = (callback: () => void, delay: number, autoLoop = true): { loopCancel: () => void; loopCalling: () => void } => {
+export const useRafLoop = (callback: () => void, delay: number, autoLoop = true): { cancelLoop: () => void; loopCalling: () => void } => {
   const savedCallback = useRef(noop);
   const refTimeout = useRef<number>();
 
-  const loopCancel = useCallback(() => {
+  const cancelLoop = useCallback(() => {
     clearTimeout(refTimeout.current);
   }, []);
 
@@ -32,9 +32,10 @@ export const useRafLoop = (callback: () => void, delay: number, autoLoop = true)
   // Set up the interval.
   useEffect(() => {
     autoLoop && loopCalling();
-  }, [loopCalling]);
+  }, [autoLoop, loopCalling]);
 
-  useEffect(() => loopCancel, [loopCancel]);
+  // unmount
+  useEffect(() => cancelLoop, [cancelLoop]);
 
-  return { loopCancel, loopCalling };
+  return { cancelLoop, loopCalling };
 };
