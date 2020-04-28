@@ -155,6 +155,11 @@ export function useZxingScanner(options: ZxingScannerOptions): ZxingScannerRetur
     loopCancel();
     streamRef.current?.getTracks()?.[0]?.stop();
     codeReader?.reset();
+    if (refVideo.current) {
+      refVideo.current.srcObject = undefined;
+    }
+    setVideoLoading(false);
+    setFailedCamera(false);
   }, []);
 
   const handleVideoLoaded = useCallback((e: React.SyntheticEvent<HTMLVideoElement, Event>) => {
