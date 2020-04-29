@@ -33,6 +33,7 @@ let ZxingScanner: FC<{
 }> = React.memo((props) => {
   let refVideo = useRef<HTMLVideoElement>();
   let refCanvas = useRef<HTMLCanvasElement>();
+  const streamRef = useRef<MediaStream>();
   let refHasVideo = useRef(false);
 
   let [failedCamera, setFailedCamera] = useState(false);
@@ -130,6 +131,7 @@ let ZxingScanner: FC<{
       })
       .then((stream) => {
         refVideo.current.srcObject = stream;
+        streamRef.current = stream;
 
         refImageCapture.current = new window["ImageCapture"](stream.getTracks()[0]);
 
@@ -160,6 +162,11 @@ let ZxingScanner: FC<{
           throw error;
         }
       });
+
+    return () => {
+      streamRef.current?.getTracks()?.[0]?.stop();
+      codeReader?.reset();
+    };
   }, []);
 
   useRafLoop(() => {
