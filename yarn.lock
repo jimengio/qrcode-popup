@@ -164,6 +164,11 @@
     lodash-es "^4.17.15"
     query-string "^6.9.0"
 
+"@sinonjs/text-encoding@0.7.1":
+  version "0.7.1"
+  resolved "https://registry.npmjs.org/@sinonjs/text-encoding/-/text-encoding-0.7.1.tgz#8da5c6530915653f3a1f38fd5f101d8c3f8079c5"
+  integrity sha512-+iTbntw2IZPb/anVDbypzfQa+ay64MW0Zo8aJ8gZPWMMK6/OubMVb6lUPMagqjOPnmtauXnFCACVl3O7ogjeqQ==
+
 "@snyk/cli-interface@1.5.0":
   version "1.5.0"
   resolved "https://registry.npmjs.org/@snyk/cli-interface/-/cli-interface-1.5.0.tgz#b9dbe6ebfb86e67ffabf29d4e0d28a52670ac456"
@@ -631,12 +636,14 @@
   resolved "https://registry.npmjs.org/@yarnpkg/lockfile/-/lockfile-1.1.0.tgz#e77a97fbd345b76d83245edcd17d393b1b41fb31"
   integrity sha512-GpSwvyXOcOOlV70vbnzjj4fW5xW/FdUF6nQEt1ENy7m4ZCczi1+/buVUPAqmGfqznsORNFzUMjctTIp8a9tuCQ==
 
-"@zxing/library@^0.16.2":
-  version "0.16.2"
-  resolved "https://registry.npmjs.org/@zxing/library/-/library-0.16.2.tgz#cb1cf4e9d03e457b9128e73afeb1961d93196add"
-  integrity sha512-EvLdMBYrpMpKMSWiRHR2FpAoStu4YN8rFlgLU/hfVwxRTOTAi8Zh+gto/WJ9fw5lYTxoZATzmBM37NzAU5LF+A==
+"@zxing/library@^0.17.0":
+  version "0.17.0"
+  resolved "https://registry.npmjs.org/@zxing/library/-/library-0.17.0.tgz#e7aa9636fdeaad8ecb81b14098211f88da16b2ff"
+  integrity sha512-P7T2k0y2mhtLyXDoHI4IzwD2KDId/CCi9PMy56Xvr2MCj+gO8RfAy0loOX9TF9eWmhi5LzbSxcz4Xkvi1Bs0/Q==
   dependencies:
     ts-custom-error "^3.0.0"
+  optionalDependencies:
+    "@sinonjs/text-encoding" "0.7.1"
 
 abbrev@^1.1.1:
   version "1.1.1"
