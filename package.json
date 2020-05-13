@@ -66,7 +66,7 @@
   },
   "dependencies": {
     "@ericblade/quagga2": "^0.0.19",
-    "@zxing/library": "^0.16.2",
+    "@zxing/library": "^0.17.0",
     "emotion": "^10.0.27",
     "jsqr": "^1.2.0",
     "react-qr-reader": "^2.2.1"
