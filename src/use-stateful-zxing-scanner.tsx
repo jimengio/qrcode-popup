@@ -2,9 +2,9 @@ import React, { useEffect, useRef, useState, CSSProperties, useCallback } from "
 import { useRafLoop } from "./util/use-raf-loop";
 import jqQR from "jsqr";
 import Quagga from "@ericblade/quagga2";
-import browserDetect from "browser-detect";
 
 import { MultiFormatReader, BarcodeFormat, DecodeHintType, HTMLCanvasElementLuminanceSource, HybridBinarizer } from "@zxing/library";
+import { isSafari } from "./util/browser";
 
 const codeReader = new MultiFormatReader();
 const jsHints = new Map();
@@ -153,8 +153,7 @@ export function useStatefulZxingScanner(options: ZxingScannerOptions): ZxingScan
 
   const { cancelLoop, loopCalling } = useRafLoop(
     () => {
-      let info = browserDetect();
-      if (info.mobile && info.name === "safari") {
+      if (isSafari()) {
         performMixedCodeScan();
       } else {
         performZxingCodeScan();
@@ -196,7 +195,7 @@ export function useStatefulZxingScanner(options: ZxingScannerOptions): ZxingScan
           }
 
           // Detect Safari problem and get sizes from video
-          if (cameraSettings.width === 0) {
+          if (isSafari()) {
             setTimeout(() => {
               // console.log("settings", cameraSettings, refVideo.current.videoWidth, refVideo.current);
               if (window.screen.availWidth > window.screen.availHeight) {

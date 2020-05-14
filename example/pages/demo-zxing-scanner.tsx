@@ -6,7 +6,6 @@ import ZxingScanner from "../../src/zxing-scanner";
 
 let DemoZxingScanner: FC<{}> = React.memo((props) => {
   let [code, setCode] = useState("");
-  let [kind, setKind] = useState(null);
 
   let [totalCost, setTotalCost] = useState(0);
 
@@ -18,19 +17,16 @@ let DemoZxingScanner: FC<{}> = React.memo((props) => {
     <div className={styleContainer}>
       <DocDemo title="Mixed Quagga2 and jsqr">
         <ZxingScanner
-          onCodeDetected={(detected, codeKind) => {
+          onCodeDetected={(detected) => {
             console.log("got code", JSON.stringify(detected));
             setCode(detected);
-            setKind(codeKind);
           }}
           onScanFinish={(info) => {
             setTotalCost(info.totalCost);
           }}
         />
         <div>Time cost: {totalCost} </div>
-        <div>
-          Scan result: {code} - {kind}
-        </div>
+        <div>Scan result: {JSON.stringify(code)}</div>
 
         <DocSnippet code={exampleCode} />
       </DocDemo>
