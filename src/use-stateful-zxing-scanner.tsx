@@ -1,5 +1,8 @@
 import React, { useEffect, useRef, useState, CSSProperties, useCallback } from "react";
 import { useRafLoop } from "./util/use-raf-loop";
+import jqQR from "jsqr";
+import Quagga from "@ericblade/quagga2";
+import browserDetect from "browser-detect";
 
 import { MultiFormatReader, BarcodeFormat, DecodeHintType, HTMLCanvasElementLuminanceSource, HybridBinarizer } from "@zxing/library";
 
@@ -49,7 +52,7 @@ export function useStatefulZxingScanner(options: ZxingScannerOptions): ZxingScan
   const [videoLoading, setVideoLoading] = useState(false);
   const [failedCamera, setFailedCamera] = useState(false);
 
-  const performCodeScan = async () => {
+  const performZxingCodeScan = async () => {
     if (!videoLoading && refCanvas.current && streamRef.current && refVideo.current) {
       const scaledCanvas = refCanvas.current;
       const scaledContext = scaledCanvas.getContext("2d");
@@ -83,18 +86,78 @@ export function useStatefulZxingScanner(options: ZxingScannerOptions): ZxingScan
         onError && onError(new Error("Failed to decode."));
       }
 
-      onScanFinish &&
-        onScanFinish({
-          drawCost: t1 - t0,
-          scanCost: t2 - t1,
-          totalCost: t2 - t0,
-        });
+      onScanFinish?.({
+        drawCost: t1 - t0,
+        scanCost: t2 - t1,
+        totalCost: t2 - t0,
+      });
+    }
+  };
+
+  let performMixedCodeScan = async () => {
+    if (refVideo.current && refCanvas.current) {
+      let canvasEl = refCanvas.current;
+      let context = canvasEl.getContext("2d");
+
+      let t0 = performance.now();
+
+      const imageCapture = new window["ImageCapture"](streamRef.current.getTracks()[0]);
+
+      const grabbedBitmap = await imageCapture.grabFrame();
+      context.drawImage(grabbedBitmap, 0, 0, state.width, state.height, 0, 0, state.width, state.height);
+
+      let imageData = context.getImageData(0, 0, canvasEl.width, canvasEl.height);
+
+      const t1 = performance.now();
+
+      // console.log(imageData);
+
+      let detectQrCode = jqQR(imageData.data, canvasEl.width, canvasEl.height);
+      if (detectQrCode != null) {
+        let t2 = performance.now();
+        if (options.onScanFinish != null) {
+          options.onScanFinish({
+            drawCost: t1 - t0,
+            scanCost: t2 - t1,
+            totalCost: t2 - t0,
+          });
+        }
+        options.onCodeDetected(detectQrCode.data.trim());
+        return;
+      }
+
+      Quagga.decodeSingle(
+        {
+          src: canvasEl.toDataURL(),
+          numOfWorkers: 0,
+          inputStream: {
+            size: canvasEl.width,
+          },
+          decoder: {
+            readers: ["code_128_reader", "ean_reader"], // List of active readers
+          },
+        },
+        (result) => {
+          let t2 = performance.now();
+          if (options.onScanFinish != null) {
+            options.onScanFinish({ drawCost: t1 - t0, scanCost: t2 - t1, totalCost: t2 - t0 });
+          }
+          if (result?.codeResult != null) {
+            options.onCodeDetected(result.codeResult.code.trim());
+          }
+        }
+      );
     }
   };
 
   const { cancelLoop, loopCalling } = useRafLoop(
     () => {
-      performCodeScan();
+      let info = browserDetect();
+      if (info.mobile && info.name === "safari") {
+        performMixedCodeScan();
+      } else {
+        performZxingCodeScan();
+      }
     },
     300,
     false

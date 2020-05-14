@@ -1,6 +1,9 @@
 import React, { FC, useEffect, useRef, useState } from "react";
 import { css, cx } from "emotion";
 import { useRafLoop } from "./util/use-raf-loop";
+import jqQR from "jsqr";
+import Quagga from "@ericblade/quagga2";
+import browserDetect from "browser-detect";
 
 import { MultiFormatReader, BarcodeFormat, DecodeHintType, HTMLCanvasElementLuminanceSource, HybridBinarizer, BinaryBitmap } from "@zxing/library";
 
@@ -55,7 +58,7 @@ let ZxingScanner: FC<{
   /** Plugins */
   /** Methods */
 
-  let performCodeScan = async () => {
+  let performZxingCodeScan = async () => {
     if (failedCamera) {
       return;
     }
@@ -115,6 +118,62 @@ let ZxingScanner: FC<{
     console.log("time cost for scanning", t2 - t1);
   };
 
+  let performMixedCodeScan = async () => {
+    if (refVideo.current && refCanvas.current) {
+      let canvasEl = refCanvas.current;
+      let context = canvasEl.getContext("2d");
+
+      let t0 = performance.now();
+
+      const imageCapture = new window["ImageCapture"](streamRef.current.getTracks()[0]);
+
+      const grabbedBitmap = await imageCapture.grabFrame();
+      context.drawImage(grabbedBitmap, 0, 0, deviceSize.w, deviceSize.h, 0, 0, deviceSize.w, deviceSize.h);
+
+      let imageData = context.getImageData(0, 0, canvasEl.width, canvasEl.height);
+
+      const t1 = performance.now();
+
+      // console.log(imageData);
+
+      let detectQrCode = jqQR(imageData.data, canvasEl.width, canvasEl.height);
+      if (detectQrCode != null) {
+        let t2 = performance.now();
+        if (props.onScanFinish != null) {
+          props.onScanFinish({
+            drawCost: t1 - t0,
+            scanCost: t2 - t1,
+            totalCost: t2 - t0,
+          });
+        }
+        props.onCodeDetected(detectQrCode.data.trim(), null);
+        return;
+      }
+
+      Quagga.decodeSingle(
+        {
+          src: canvasEl.toDataURL(),
+          numOfWorkers: 0,
+          inputStream: {
+            size: canvasEl.width,
+          },
+          decoder: {
+            readers: ["code_128_reader", "ean_reader"], // List of active readers
+          },
+        },
+        (result) => {
+          let t2 = performance.now();
+          if (props.onScanFinish != null) {
+            props.onScanFinish({ drawCost: t1 - t0, scanCost: t2 - t1, totalCost: t2 - t0 });
+          }
+          if (result?.codeResult != null) {
+            props.onCodeDetected(result.codeResult.code.trim(), null);
+          }
+        }
+      );
+    }
+  };
+
   /** Effects */
 
   useEffect(() => {
@@ -169,7 +228,12 @@ let ZxingScanner: FC<{
   }, []);
 
   useRafLoop(() => {
-    performCodeScan();
+    let info = browserDetect();
+    if (info.mobile && info.name === "safari") {
+      performMixedCodeScan();
+    } else {
+      performZxingCodeScan();
+    }
   }, 300);
 
   /** Renderers */
