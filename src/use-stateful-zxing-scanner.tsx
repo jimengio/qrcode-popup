@@ -56,13 +56,13 @@ export function useStatefulZxingScanner(options: ZxingScannerOptions): ZxingScan
     if (!videoLoading && refCanvas.current && streamRef.current && refVideo.current) {
       const scaledCanvas = refCanvas.current;
       const scaledContext = scaledCanvas.getContext("2d");
-      // const imageCapture = new window["ImageCapture"](streamRef.current.getTracks()[0]);
+      const imageCapture = new window["ImageCapture"](streamRef.current.getTracks()[0]);
 
       const t0 = performance.now();
       scaledContext.clearRect(0, 0, state.width, state.height);
 
-      // const grabbedBitmap = await imageCapture.grabFrame();
-      scaledContext.drawImage(refVideo.current, 0, 0, refVideo.current.videoWidth, refVideo.current.videoHeight, 0, 0, state.width, state.height);
+      const grabbedBitmap = await imageCapture.grabFrame();
+      scaledContext.drawImage(grabbedBitmap, 0, 0, refVideo.current.videoWidth, refVideo.current.videoHeight, 0, 0, state.width, state.height);
 
       const t1 = performance.now();
 
@@ -77,7 +77,13 @@ export function useStatefulZxingScanner(options: ZxingScannerOptions): ZxingScan
         t2 = performance.now();
 
         if (result != null && result.getText() != "") {
-          onCodeDetected && onCodeDetected(result.getText());
+          onScanFinish?.({
+            drawCost: t1 - t0,
+            scanCost: t2 - t1,
+            totalCost: t2 - t0,
+          });
+
+          onCodeDetected?.(result.getText());
           return;
         }
       } catch (error) {
@@ -85,12 +91,6 @@ export function useStatefulZxingScanner(options: ZxingScannerOptions): ZxingScan
 
         onError && onError(new Error("Failed to decode."));
       }
-
-      onScanFinish?.({
-        drawCost: t1 - t0,
-        scanCost: t2 - t1,
-        totalCost: t2 - t0,
-      });
     }
   };
 
@@ -116,13 +116,13 @@ export function useStatefulZxingScanner(options: ZxingScannerOptions): ZxingScan
       let detectQrCode = jqQR(imageData.data, canvasEl.width, canvasEl.height);
       if (detectQrCode != null) {
         let t2 = performance.now();
-        if (options.onScanFinish != null) {
-          options.onScanFinish({
-            drawCost: t1 - t0,
-            scanCost: t2 - t1,
-            totalCost: t2 - t0,
-          });
-        }
+
+        options.onScanFinish?.({
+          drawCost: t1 - t0,
+          scanCost: t2 - t1,
+          totalCost: t2 - t0,
+        });
+
         options.onCodeDetected(detectQrCode.data.trim());
         return;
       }
@@ -140,10 +140,9 @@ export function useStatefulZxingScanner(options: ZxingScannerOptions): ZxingScan
         },
         (result) => {
           let t2 = performance.now();
-          if (options.onScanFinish != null) {
-            options.onScanFinish({ drawCost: t1 - t0, scanCost: t2 - t1, totalCost: t2 - t0 });
-          }
+
           if (result?.codeResult != null) {
+            options.onScanFinish?.({ drawCost: t1 - t0, scanCost: t2 - t1, totalCost: t2 - t0 });
             options.onCodeDetected(result.codeResult.code.trim());
           }
         }
@@ -154,6 +153,7 @@ export function useStatefulZxingScanner(options: ZxingScannerOptions): ZxingScan
   const { cancelLoop, loopCalling } = useRafLoop(
     () => {
       if (isSafari()) {
+        // fallback to mixed scanners
         performMixedCodeScan();
       } else {
         performZxingCodeScan();
@@ -210,7 +210,7 @@ export function useStatefulZxingScanner(options: ZxingScannerOptions): ZxingScan
                   height: refVideo.current.videoWidth,
                 });
               }
-            }, 100);
+            }, 700); // delay longer time since iPad can be slower
           }
 
           loopCalling();
