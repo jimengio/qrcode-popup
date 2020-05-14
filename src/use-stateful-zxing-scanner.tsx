@@ -56,13 +56,13 @@ export function useStatefulZxingScanner(options: ZxingScannerOptions): ZxingScan
     if (!videoLoading && refCanvas.current && streamRef.current && refVideo.current) {
       const scaledCanvas = refCanvas.current;
       const scaledContext = scaledCanvas.getContext("2d");
-      const imageCapture = new window["ImageCapture"](streamRef.current.getTracks()[0]);
+      // const imageCapture = new window["ImageCapture"](streamRef.current.getTracks()[0]);
 
       const t0 = performance.now();
       scaledContext.clearRect(0, 0, state.width, state.height);
 
-      const grabbedBitmap = await imageCapture.grabFrame();
-      scaledContext.drawImage(grabbedBitmap, 0, 0, state.width, state.height, 0, 0, state.width, state.height);
+      // const grabbedBitmap = await imageCapture.grabFrame();
+      scaledContext.drawImage(refVideo.current, 0, 0, state.width, state.height, 0, 0, state.width, state.height);
 
       const t1 = performance.now();
 
@@ -101,10 +101,7 @@ export function useStatefulZxingScanner(options: ZxingScannerOptions): ZxingScan
 
       let t0 = performance.now();
 
-      const imageCapture = new window["ImageCapture"](streamRef.current.getTracks()[0]);
-
-      const grabbedBitmap = await imageCapture.grabFrame();
-      context.drawImage(grabbedBitmap, 0, 0, state.width, state.height, 0, 0, state.width, state.height);
+      context.drawImage(refVideo.current, 0, 0, state.width, state.height, 0, 0, state.width, state.height);
 
       let imageData = context.getImageData(0, 0, canvasEl.width, canvasEl.height);
 
