@@ -62,7 +62,7 @@ export function useStatefulZxingScanner(options: ZxingScannerOptions): ZxingScan
       scaledContext.clearRect(0, 0, state.width, state.height);
 
       // const grabbedBitmap = await imageCapture.grabFrame();
-      scaledContext.drawImage(refVideo.current, 0, 0, state.width, state.height, 0, 0, state.width, state.height);
+      scaledContext.drawImage(refVideo.current, 0, 0, refVideo.current.videoWidth, refVideo.current.videoHeight, 0, 0, state.width, state.height);
 
       const t1 = performance.now();
 
@@ -101,7 +101,11 @@ export function useStatefulZxingScanner(options: ZxingScannerOptions): ZxingScan
 
       let t0 = performance.now();
 
-      context.drawImage(refVideo.current, 0, 0, state.width, state.height, 0, 0, state.width, state.height);
+      context.drawImage(refVideo.current, 0, 0, refVideo.current.videoWidth, refVideo.current.videoHeight, 0, 0, state.width, state.height);
+
+      if (canvasEl.width < 1 || canvasEl.height < 1) {
+        return;
+      }
 
       let imageData = context.getImageData(0, 0, canvasEl.width, canvasEl.height);
 
@@ -189,6 +193,25 @@ export function useStatefulZxingScanner(options: ZxingScannerOptions): ZxingScan
               width: cameraSettings.height,
               height: cameraSettings.width,
             });
+          }
+
+          // Detect Safari problem and get sizes from video
+          if (cameraSettings.width === 0) {
+            setTimeout(() => {
+              // console.log("settings", cameraSettings, refVideo.current.videoWidth, refVideo.current);
+              if (window.screen.availWidth > window.screen.availHeight) {
+                setState({
+                  width: refVideo.current.videoWidth,
+                  height: refVideo.current.videoHeight,
+                });
+              } else {
+                // 检测手机竖屏状态, 需要宽高的处理
+                setState({
+                  width: refVideo.current.videoHeight,
+                  height: refVideo.current.videoWidth,
+                });
+              }
+            }, 100);
           }
 
           loopCalling();

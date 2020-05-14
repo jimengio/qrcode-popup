@@ -69,6 +69,10 @@ let ZxingScanner: FC<{
       return;
     }
 
+    if (refCanvas.current.width < 1 || refCanvas.current.height < 1) {
+      return;
+    }
+
     let scaledCanvas = refCanvas.current;
     let scaledContext = scaledCanvas.getContext("2d");
 
@@ -77,7 +81,7 @@ let ZxingScanner: FC<{
 
     // let grabbedBitmap = await imageCapture.grabFrame();
     // console.log("drawing", 0, 0, deviceSize.w, deviceSize.h, 0, 0, scaledWidth, scaledHeight);
-    scaledContext.drawImage(refVideo.current, 0, 0, deviceSize.w, deviceSize.h, 0, 0, scaledWidth, scaledHeight);
+    scaledContext.drawImage(refVideo.current, 0, 0, refVideo.current.videoWidth, refVideo.current.videoHeight, 0, 0, scaledWidth, scaledHeight);
 
     // console.log(scaledWidth, scaledHeight, deviceSize, jsHints);
 
@@ -125,7 +129,7 @@ let ZxingScanner: FC<{
 
       let t0 = performance.now();
 
-      context.drawImage(refVideo.current, 0, 0, deviceSize.w, deviceSize.h, 0, 0, deviceSize.w, deviceSize.h);
+      context.drawImage(refVideo.current, 0, 0, refVideo.current.videoWidth, refVideo.current.videoHeight, 0, 0, deviceSize.w, deviceSize.h);
 
       let imageData = context.getImageData(0, 0, canvasEl.width, canvasEl.height);
 
@@ -204,6 +208,25 @@ let ZxingScanner: FC<{
             w: cameraSettings.height,
             h: cameraSettings.width,
           });
+        }
+
+        // Detect Safari problem and get sizes from video
+        if (cameraSettings.width === 0) {
+          setTimeout(() => {
+            // console.log("settings", cameraSettings, refVideo.current.videoWidth, refVideo.current);
+            if (window.screen.availWidth > window.screen.availHeight) {
+              setDeviceSize({
+                w: refVideo.current.videoWidth,
+                h: refVideo.current.videoHeight,
+              });
+            } else {
+              // 检测手机竖屏状态, 需要宽高的处理
+              setDeviceSize({
+                w: refVideo.current.videoHeight,
+                h: refVideo.current.videoWidth,
+              });
+            }
+          }, 100);
         }
 
         // console.log("set deviceSize", cameraSettings);
