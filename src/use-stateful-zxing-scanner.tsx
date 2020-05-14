@@ -1,7 +1,10 @@
 import React, { useEffect, useRef, useState, CSSProperties, useCallback } from "react";
 import { useRafLoop } from "./util/use-raf-loop";
+import jqQR from "jsqr";
+import Quagga from "@ericblade/quagga2";
 
 import { MultiFormatReader, BarcodeFormat, DecodeHintType, HTMLCanvasElementLuminanceSource, HybridBinarizer } from "@zxing/library";
+import { isSafari } from "./util/browser";
 
 const codeReader = new MultiFormatReader();
 const jsHints = new Map();
@@ -49,7 +52,7 @@ export function useStatefulZxingScanner(options: ZxingScannerOptions): ZxingScan
   const [videoLoading, setVideoLoading] = useState(false);
   const [failedCamera, setFailedCamera] = useState(false);
 
-  const performCodeScan = async () => {
+  const performZxingCodeScan = async () => {
     if (!videoLoading && refCanvas.current && streamRef.current && refVideo.current) {
       const scaledCanvas = refCanvas.current;
       const scaledContext = scaledCanvas.getContext("2d");
@@ -59,7 +62,7 @@ export function useStatefulZxingScanner(options: ZxingScannerOptions): ZxingScan
       scaledContext.clearRect(0, 0, state.width, state.height);
 
       const grabbedBitmap = await imageCapture.grabFrame();
-      scaledContext.drawImage(grabbedBitmap, 0, 0, state.width, state.height, 0, 0, state.width, state.height);
+      scaledContext.drawImage(grabbedBitmap, 0, 0, refVideo.current.videoWidth, refVideo.current.videoHeight, 0, 0, state.width, state.height);
 
       const t1 = performance.now();
 
@@ -74,7 +77,13 @@ export function useStatefulZxingScanner(options: ZxingScannerOptions): ZxingScan
         t2 = performance.now();
 
         if (result != null && result.getText() != "") {
-          onCodeDetected && onCodeDetected(result.getText());
+          onScanFinish?.({
+            drawCost: t1 - t0,
+            scanCost: t2 - t1,
+            totalCost: t2 - t0,
+          });
+
+          onCodeDetected?.(result.getText());
           return;
         }
       } catch (error) {
@@ -82,19 +91,73 @@ export function useStatefulZxingScanner(options: ZxingScannerOptions): ZxingScan
 
         onError && onError(new Error("Failed to decode."));
       }
+    }
+  };
 
-      onScanFinish &&
-        onScanFinish({
+  let performMixedCodeScan = async () => {
+    if (refVideo.current && refCanvas.current) {
+      let canvasEl = refCanvas.current;
+      let context = canvasEl.getContext("2d");
+
+      let t0 = performance.now();
+
+      context.drawImage(refVideo.current, 0, 0, refVideo.current.videoWidth, refVideo.current.videoHeight, 0, 0, state.width, state.height);
+
+      if (canvasEl.width < 1 || canvasEl.height < 1) {
+        return;
+      }
+
+      let imageData = context.getImageData(0, 0, canvasEl.width, canvasEl.height);
+
+      const t1 = performance.now();
+
+      // console.log(imageData);
+
+      let detectQrCode = jqQR(imageData.data, canvasEl.width, canvasEl.height);
+      if (detectQrCode != null) {
+        let t2 = performance.now();
+
+        options.onScanFinish?.({
           drawCost: t1 - t0,
           scanCost: t2 - t1,
           totalCost: t2 - t0,
         });
+
+        options.onCodeDetected(detectQrCode.data.trim());
+        return;
+      }
+
+      Quagga.decodeSingle(
+        {
+          src: canvasEl.toDataURL(),
+          numOfWorkers: 0,
+          inputStream: {
+            size: canvasEl.width,
+          },
+          decoder: {
+            readers: ["code_128_reader", "ean_reader"], // List of active readers
+          },
+        },
+        (result) => {
+          let t2 = performance.now();
+
+          if (result?.codeResult != null) {
+            options.onScanFinish?.({ drawCost: t1 - t0, scanCost: t2 - t1, totalCost: t2 - t0 });
+            options.onCodeDetected(result.codeResult.code.trim());
+          }
+        }
+      );
     }
   };
 
   const { cancelLoop, loopCalling } = useRafLoop(
     () => {
-      performCodeScan();
+      if (isSafari()) {
+        // fallback to mixed scanners
+        performMixedCodeScan();
+      } else {
+        performZxingCodeScan();
+      }
     },
     300,
     false
@@ -129,6 +192,25 @@ export function useStatefulZxingScanner(options: ZxingScannerOptions): ZxingScan
               width: cameraSettings.height,
               height: cameraSettings.width,
             });
+          }
+
+          // Detect Safari problem and get sizes from video
+          if (isSafari()) {
+            setTimeout(() => {
+              // console.log("settings", cameraSettings, refVideo.current.videoWidth, refVideo.current);
+              if (window.screen.availWidth > window.screen.availHeight) {
+                setState({
+                  width: refVideo.current.videoWidth,
+                  height: refVideo.current.videoHeight,
+                });
+              } else {
+                // 检测手机竖屏状态, 需要宽高的处理
+                setState({
+                  width: refVideo.current.videoHeight,
+                  height: refVideo.current.videoWidth,
+                });
+              }
+            }, 700); // delay longer time since iPad can be slower
           }
 
           loopCalling();
