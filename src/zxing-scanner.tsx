@@ -39,7 +39,6 @@ let ZxingScanner: FC<{
   let [failedCamera, setFailedCamera] = useState(false);
 
   /** exprimental code for grabFrame */
-  let refImageCapture = useRef<any>();
 
   let [deviceSize, setDeviceSize] = useState({
     w: 200, // 设置比较小的初始值
@@ -61,7 +60,9 @@ let ZxingScanner: FC<{
       return;
     }
 
-    if (!refHasVideo.current || !refCanvas.current || !refImageCapture.current) {
+    let imageCapture = new window["ImageCapture"](streamRef.current.getTracks()[0]);
+
+    if (!refHasVideo.current || !refCanvas.current || !imageCapture) {
       return;
     }
 
@@ -71,7 +72,7 @@ let ZxingScanner: FC<{
     let t0 = performance.now();
     scaledContext.clearRect(0, 0, scaledWidth, scaledHeight);
 
-    let grabbedBitmap = await refImageCapture.current.grabFrame();
+    let grabbedBitmap = await imageCapture.grabFrame();
     // console.log("drawing", 0, 0, deviceSize.w, deviceSize.h, 0, 0, scaledWidth, scaledHeight);
     scaledContext.drawImage(grabbedBitmap, 0, 0, deviceSize.w, deviceSize.h, 0, 0, scaledWidth, scaledHeight);
 
@@ -132,8 +133,6 @@ let ZxingScanner: FC<{
       .then((stream) => {
         refVideo.current.srcObject = stream;
         streamRef.current = stream;
-
-        refImageCapture.current = new window["ImageCapture"](stream.getTracks()[0]);
 
         refHasVideo.current = true;
         let cameraSettings = stream.getTracks()[0].getSettings();
