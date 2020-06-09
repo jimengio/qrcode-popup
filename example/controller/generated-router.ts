@@ -12,7 +12,7 @@ function qsStringify(queries: { [k: string]: any }) {
 
 // generated
 
-// Generated with router-code-generator@0.2.6
+// Generated with router-code-generator@0.2.7
 
 export let genRouter = {
   qrCode: {
@@ -95,22 +95,24 @@ export let genRouter = {
   },
 };
 
-export type GenRouterTypeMain =
-  | GenRouterTypeTree["qrCode"]
-  | GenRouterTypeTree["barcode"]
-  | GenRouterTypeTree["zbarScanner"]
-  | GenRouterTypeTree["mixedScanner"]
-  | GenRouterTypeTree["mixedScannerPopup"]
-  | GenRouterTypeTree["zxingScanner"]
-  | GenRouterTypeTree["useStatefulZxingScanner"]
-  | GenRouterTypeTree["zxingScannerPopup"]
-  | GenRouterTypeTree["fileMixedScanner"]
-  | GenRouterTypeTree["zxingWasmScanner"]
-  | GenRouterTypeTree["zxingWasmScannerPopup"]
-  | GenRouterTypeTree["scannerEvents"]
-  | GenRouterTypeTree["$"];
+/** Deprecating, use GenRouterTypeTree["next"] instead */
+export type GenRouterTypeMain = GenRouterTypeTree["next"];
 
 export interface GenRouterTypeTree {
+  next:
+    | GenRouterTypeTree["qrCode"]
+    | GenRouterTypeTree["barcode"]
+    | GenRouterTypeTree["zbarScanner"]
+    | GenRouterTypeTree["mixedScanner"]
+    | GenRouterTypeTree["mixedScannerPopup"]
+    | GenRouterTypeTree["zxingScanner"]
+    | GenRouterTypeTree["useStatefulZxingScanner"]
+    | GenRouterTypeTree["zxingScannerPopup"]
+    | GenRouterTypeTree["fileMixedScanner"]
+    | GenRouterTypeTree["zxingWasmScanner"]
+    | GenRouterTypeTree["zxingWasmScannerPopup"]
+    | GenRouterTypeTree["scannerEvents"]
+    | GenRouterTypeTree["$"];
   qrCode: {
     name: "qr-code";
     params: {};

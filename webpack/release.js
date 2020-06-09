@@ -75,8 +75,8 @@ module.exports = {
       template: "template.ejs",
       trackingCode,
     }),
-    new CopyWebpackPlugin([{ from: "node_modules/zbar.wasm/data/zbar.wasm", to: "wasm/" }], {}),
-    new CopyWebpackPlugin([{ from: "src/assets/zxing-go.wasm", to: "wasm/" }], {}),
+    new CopyWebpackPlugin({ patterns: [{ from: "node_modules/zbar.wasm/data/zbar.wasm", to: "wasm/" }] }),
+    new CopyWebpackPlugin({ patterns: [{ from: "src/assets/zxing-go.wasm", to: "wasm/" }] }),
     new HtmlWebpackTagsPlugin({
       tags: [`${dllManifest.name}.js`],
       append: false,
